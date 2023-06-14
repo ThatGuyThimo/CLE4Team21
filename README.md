@@ -1,9 +1,9 @@
 # CLE4 Team21
 
-<!-- ![fishes](./src/images/preview.png)
+<!-- ![fishes](./src/images/preview.png) -->
 
-- Klik op USE THIS TEMPLATE. Kies als owner jouw eigen github account. 
-- Geef het project een coole naam en check dat dit startproject nu in je eigen github staat.
+- DEV NOTE: GEBRUIK BRANCHES VOOR JE FEATURES EN MAAK PULL REQUESTS.
+<!-- - Geef het project een coole naam en check dat dit startproject nu in je eigen github staat.
 - CLONE de repository van jouw eigen github naar je lokale computer via de git url. Die vind je onder "code".
 - Open VS Code. Klik het "Source Control" icoontje. Kies voor "clone repository" en plak de git url.
 - VS Code haalt nu het startproject op en opent het automatisch.
