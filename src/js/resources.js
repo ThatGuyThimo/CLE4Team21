@@ -55,8 +55,11 @@ import uiHoverAudioSrc from '../sounds/001_Hover_01.wav'
 // import hit_3AudioSrc from '../sounds/03_Claw_03.wav'
 // import hit_4AudioSrc from '../sounds/04_Claw_04.wav'
 // import tiledmap from '../images/testingmap2.tmx'
+import hofbg1Image from '../images/hofbg1.png'
 
 const Resources = {
+    
+    hofbg1: new ImageSource(hofbg1Image),
     // tiledMap: new TiledMapResource(tiledmap),
     // blackscreen: new ImageSource(blackscreenImageSrc),
     // playeridle: new ImageSource(idleImageSrc),
@@ -94,6 +97,7 @@ const Resources = {
 
 const ResourceLoader = new Loader([
     Resources.uibuttons, 
+    Resources.hofbg1,
     // Resources.playerdeath, 
     // Resources.playeridle, 
     // Resources.playerrun, 
