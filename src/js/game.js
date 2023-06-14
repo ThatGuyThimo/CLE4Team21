@@ -5,7 +5,7 @@ import { Resources, ResourceLoader } from './resources.js'
 
 import { Data } from './Data'
 import { Mainmenu } from './Mainmenu'
-// import { Level1 } from './Level1'
+import { Level1 } from './Level1'
 // import { Settings } from './Settings'
 // import { PauseScreen } from "./Pause.js"
 
@@ -13,8 +13,8 @@ export class Game extends ex.Engine {
 
   DataClass
   mainmenu
+  level1
   // settings
-  // level1
   // pausescreen
 
     constructor() {
@@ -33,12 +33,12 @@ export class Game extends ex.Engine {
     startGame() {
 
       this.mainmenu = new Mainmenu(this.DataClass)
+      this.level1 = new Level1(this.DataClass)
       // this.settings = new Settings(this.DataClass)
-      // this.level1 = new Level1(this.DataClass)
       // this.pausescreen = new PauseScreen(this.DataClass)
 
       this.add('mainmenu', this.mainmenu)
-      // this.add('level1', this.level1)
+      this.add('level1', this.level1)
       // this.add('settings', this.settings)
       // this.add('pausescreen', this.pausescreen)
       this.goToScene('mainmenu')

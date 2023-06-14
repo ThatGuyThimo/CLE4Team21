@@ -47,7 +47,7 @@ export class Mainmenu extends ex.Scene {
     onPreUpdate(Engine) {
         if(this.startButton.isClicked()) {
             this.startButton.setClicked()
-            Engine.goToScene('testmap')
+            Engine.goToScene('level1')
         }
         if(this.settingsButton.isClicked()) {
             this.settingsButton.setClicked()
