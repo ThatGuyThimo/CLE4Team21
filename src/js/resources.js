@@ -56,6 +56,10 @@ import hit_3AudioSrc from '../sounds/03_Claw_03.wav'
 import hit_4AudioSrc from '../sounds/04_Claw_04.wav'
 // import tiledmap from '../images/testingmap2.tmx'
 // import hofbg1Image from '../images/hofbg1.png'
+import background from '../images/Background.png'
+import middelground from '../images/Middleground.png'
+import foreground from '../images/Foreground.png'
+import coinImageSrc from '../images/Coin.png'
 
 const Resources = {
     
@@ -83,7 +87,7 @@ const Resources = {
     uihoversound: new Sound(uiHoverAudioSrc),
     // enemyknight: [new ImageSource(idleImageSrc), new ImageSource(runImageSrc), new ImageSource(jumpImageSrc), new ImageSource(deathImageSrc), [new ImageSource(damageImageSrc), true],],
     // enemyskeleton: [new ImageSource(idleSkeletonImageSrc), new ImageSource(runSkeletonImageSrc), new ImageSource(idleSkeletonImageSrc), new ImageSource(deathSkeletonImageSrc), [new ImageSource(damageSkeletonImageSrc), false],],
-    // background: [new ImageSource(bgNightTownFrontImageSrc), new ImageSource(bgNightTownMiddleImageSrc), new ImageSource(bgNightTownBackImageSrc)],
+    background: [new ImageSource(foreground), new ImageSource(middelground), new ImageSource(background)],
     // attack1sounds: [new Sound(attack1_1AudioSrc), new Sound(attack1_2AudioSrc), new Sound(attack1_3AudioSrc)],
     // attack2sounds: [new Sound(attack2_1AudioSrc), new Sound(attack2_2AudioSrc), new Sound(attack2_3AudioSrc)],
     // bowhitsounds: [new Sound(bowHit1AudioSrc), new Sound(bowHit2AudioSrc), new Sound(bowHit3AudioSrc)],
@@ -93,17 +97,19 @@ const Resources = {
     playerhitsounds: [new Sound(hit_1AudioSrc), new Sound(hit_2AudioSrc), new Sound(hit_3AudioSrc), new Sound(hit_4AudioSrc)],
     crouchinganims: [new ImageSource(crouchImageSrc), new ImageSource(crouchTransitionImageSrc), new ImageSource(crouchWalkImageSrc)],
     playerhit: new ImageSource(damageImageSrc),
+    coin: new ImageSource(coinImageSrc)
 }
 
 const ResourceLoader = new Loader([
     Resources.uibuttons, 
-    Resources.hofbg1,
+    // Resources.hofbg1,
     Resources.playerdeath, 
     Resources.playeridle, 
     Resources.playerrun, 
     Resources.playerfall, 
     Resources.playerjump, 
     Resources.playerjumptofall, 
+    Resources.coin, 
     // Resources.playerattack1, 
     // Resources.playerattack2, 
     // Resources.trackoverworld1,
@@ -125,9 +131,9 @@ const ResourceLoader = new Loader([
     // Resources.enemyskeleton[2],
     // Resources.enemyskeleton[3],
     // Resources.enemyskeleton[4][0],
-    // Resources.background[0],
-    // Resources.background[1],
-    // Resources.background[2],
+    Resources.background[0],
+    Resources.background[1],
+    Resources.background[2],
     Resources.playerhitsounds[0],
     Resources.playerhitsounds[1],
     Resources.playerhitsounds[2],
