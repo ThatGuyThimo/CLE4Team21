@@ -63,7 +63,7 @@ export class Level1 extends ex.Scene {
     this.camera.strategy.limitCameraBounds(boundingBox);
   }
 
-  reset() {
+  resetLevel() {
     this.player.pos = new ex.Vector(100, 520);
   }
 }
