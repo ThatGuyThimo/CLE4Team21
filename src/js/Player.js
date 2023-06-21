@@ -21,19 +21,33 @@ export class Player extends ex.Actor {
     attackHitbox
     multiplayer = false
     player
+    speed
   
-     constructor(x, y, Dataclass, multiplayer, player, collisionGroup) {
+
+    /**
+     * 
+     * @param {ex.Vector} pos 
+     * @param {Class} Dataclass 
+     * @param {boolean} multiplayer 
+     * @param {Number} player 
+     * @param {ex.Vector} scale 
+     * @param {Number} speed 
+     * @param {ex.collisionGroup} collisionGroup 
+     */
+     constructor(pos, Dataclass, multiplayer, player, scale, speed, collisionGroup) {
         super({ 
-            x: x,
-            y: y,
+            x: pos.x,
+            y: pos.y,
             name: 'player',
             collisionType: ex.CollisionType.Active,
             // collisionGroup: collisionGroup,
             collider: ex.Shape.Box(20, 40, ex.Vector.Half, ex.vec(0, 20))
         })
+        this.scale = scale
         this.DataClass = Dataclass
         this.multiplayer = multiplayer
         this.player = player
+        this.speed = speed
     }
 
     onInitialize(engine) {
@@ -185,6 +199,12 @@ export class Player extends ex.Actor {
         // console.log(this.facing)
         // console.log(this.onGround)
         // console.log(this.vel.y)
+
+        if(this.crouching) {
+            this.vel.x = this.speed / 2
+        } else {
+            this.vel.x = this.speed
+        }
         this.DataClass.setPlayerXpos(this.pos.x)
         this.SFXVolume = localStorage.getItem('SFXvolume')
         if(this.vel.y == 0) {
@@ -197,30 +217,30 @@ export class Player extends ex.Actor {
         } else {
             this.onGround = false
         }
-        if(
-            this.onGround && 
-            !engine.input.keyboard.isHeld(ex.Input.Keys.D) && 
-            !engine.input.keyboard.isHeld(ex.Input.Keys.Right) &&  
-            !engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadRight) && 
-            !engine.input.keyboard.isHeld(ex.Input.Keys.A) && 
-            !engine.input.keyboard.isHeld(ex.Input.Keys.Left) && 
-            !engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadLeft) && 
-            this.player == 1 && 
-            !this.multiplayer ||
-            !engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadLeft) && 
-            !engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadRight) &&
-            this.player == 2 &&
-            this.multiplayer ||
-            !engine.input.keyboard.isHeld(ex.Input.Keys.D) && 
-            !engine.input.keyboard.isHeld(ex.Input.Keys.Right) &&  
-            !engine.input.keyboard.isHeld(ex.Input.Keys.A) && 
-            !engine.input.keyboard.isHeld(ex.Input.Keys.Left) && 
-            this.player == 1 && 
-            this.multiplayer
-            ) {
+        // if(
+        //     this.onGround && 
+        //     !engine.input.keyboard.isHeld(ex.Input.Keys.D) && 
+        //     !engine.input.keyboard.isHeld(ex.Input.Keys.Right) &&  
+        //     !engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadRight) && 
+        //     !engine.input.keyboard.isHeld(ex.Input.Keys.A) && 
+        //     !engine.input.keyboard.isHeld(ex.Input.Keys.Left) && 
+        //     !engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadLeft) && 
+        //     this.player == 1 && 
+        //     !this.multiplayer ||
+        //     !engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadLeft) && 
+        //     !engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadRight) &&
+        //     this.player == 2 &&
+        //     this.multiplayer ||
+        //     !engine.input.keyboard.isHeld(ex.Input.Keys.D) && 
+        //     !engine.input.keyboard.isHeld(ex.Input.Keys.Right) &&  
+        //     !engine.input.keyboard.isHeld(ex.Input.Keys.A) && 
+        //     !engine.input.keyboard.isHeld(ex.Input.Keys.Left) && 
+        //     this.player == 1 && 
+        //     this.multiplayer
+        //     ) {
 
-            this.vel.x = 0
-        }
+        //     this.vel.x = 0
+        // }
         if(
             this.crouching &&
             !engine.input.keyboard.isHeld(ex.Input.Keys.S) && 
@@ -496,10 +516,10 @@ export class Player extends ex.Actor {
 
         engine.input.gamepads.at(0).on('button', (event) => {
             if (event.button === ex.Input.Buttons.Face1 && this.player == 1 && !this.multiplayer && !this.hit && this.attacking == 0 && this.health > 0 || event.button === ex.Input.Buttons.Face1 && this.player == 2 && this.multiplayer && !this.hit && this.attacking == 0 && this.health > 0 || event.button === ex.Input.Buttons.DpadUp && this.player == 1 && !this.multiplayer && !this.hit && this.attacking == 0 && this.health > 0 || event.button === ex.Input.Buttons.DpadUp && this.player == 2 && this.multiplayer && !this.hit && this.attacking == 0 && this.health > 0) {
-            if(this.onGround && !this.jumped) {
+            // if(this.onGround && !this.jumped) {
                 this.jump()
                 this.jumped = true
-            }
+            // }
             }
             // if (event.button === ex.Input.Buttons.Face2 && !this.hit && this.health > 0 && this.player == 1 && !this.multiplayer || event.button === ex.Input.Buttons.Face2 && !this.hit && this.health > 0 && this.player == 2 && this.multiplayer) {
             //     if (!this.attacked) {
@@ -522,24 +542,23 @@ export class Player extends ex.Actor {
                 case  "D":
                     switch(this.crouching){
                         case true:
-                            this.vel.x = 75
+                            this.vel.x = this.speed / 2 + 20
                             break;
                         default:
-                            this.vel.x = 150
+                            this.vel.x = this.speed + 20
                             break;
                     }
                     break;
                 case "A":
                     switch(this.crouching){
                         case true:
-                            this.vel.x = -75
+                            this.vel.x = this.speed / 2 - 20
                             break;
                         default:
-                            this.vel.x = -150
+                            this.vel.x = this.speed - 20
                             break;
                     }
                     break;
-                default:
     
             }
         }

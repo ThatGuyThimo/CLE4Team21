@@ -23,24 +23,24 @@ export class Coin extends ex.Actor {
         anchor: ex.Vector.Zero,
       });
 
-    //   let coinSheet = ex.SpriteSheet.fromImageSource({
-    //     image: image,
-    //     grid: {
-    //         rows: 1,
-    //         columns: 4,
-    //         spriteWidth: 64,
-    //         spriteHeight: 64
-    //     }
-    // })
+      let coinSheet = ex.SpriteSheet.fromImageSource({
+        image: Resources.coinanim,
+        grid: {
+            rows: 3,
+            columns: 2,
+            spriteWidth: 32,
+            spriteHeight: 32
+        }
+    })
     this.Dataclass = Dataclass
       
 
-    // const animation = ex.Animation.fromSpriteSheet(coinSheet, ex.range(0, 3), 50);
+    const animation = ex.Animation.fromSpriteSheet(coinSheet, ex.range(0, 5), 150);
 
     this.scale = scale
-    const sprite = Resources.coin.toSprite();
-    this.graphics.use(sprite);
-    // this.graphics.use(animation);
+    // const sprite = Resources.coin.toSprite();
+    // this.graphics.use(sprite);
+    this.graphics.use(animation);
   
       this.on('collisionstart', (event) => {
         if (event.other instanceof Player) {

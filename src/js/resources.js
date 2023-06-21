@@ -60,6 +60,7 @@ import background from '../images/Background.png'
 import middelground from '../images/Middleground.png'
 import foreground from '../images/Foreground.png'
 import coinImageSrc from '../images/Coin.png'
+import coinanimImageSrc from '../images/Coinsheet.png'
 
 const Resources = {
     
@@ -97,7 +98,8 @@ const Resources = {
     playerhitsounds: [new Sound(hit_1AudioSrc), new Sound(hit_2AudioSrc), new Sound(hit_3AudioSrc), new Sound(hit_4AudioSrc)],
     crouchinganims: [new ImageSource(crouchImageSrc), new ImageSource(crouchTransitionImageSrc), new ImageSource(crouchWalkImageSrc)],
     playerhit: new ImageSource(damageImageSrc),
-    coin: new ImageSource(coinImageSrc)
+    coin: new ImageSource(coinImageSrc),
+    coinanim: new ImageSource(coinanimImageSrc)
 }
 
 const ResourceLoader = new Loader([
@@ -119,6 +121,7 @@ const ResourceLoader = new Loader([
     Resources.playerhit,
     // Resources.sign,
     Resources.healthui,
+    Resources.coinanim,
     // Resources.buttons,
     // Resources.blackscreen,
     // Resources.enemyknight[0],
