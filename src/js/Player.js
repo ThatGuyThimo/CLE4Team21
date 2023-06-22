@@ -564,7 +564,7 @@ export class Player extends ex.Actor {
         }
     }
     jump() {
-        console.log('jumped')
+        // console.log('jumped')
         if(!this.jumped && this.onGround){
             this.transition.reset()
             this.vel.y = -300

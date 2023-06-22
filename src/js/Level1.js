@@ -6,12 +6,18 @@ import { BackgroundClass } from './Background.js';
 import { Coin } from './Coin';
 import { Player } from './Player.js';
 import { Scorelabel } from './Scorelabel.js';
+import { Hp } from './Hp.js';
 
 export class Level1 extends ex.Scene {
 
   player
   scorelabel
   DataClass
+  trackplaying
+  dead
+  muisicVolume
+  playerHP
+  paused
 
   constructor(DataClass) {
     super();
@@ -22,11 +28,50 @@ export class Level1 extends ex.Scene {
     this.initaializeActors();
     this.initaializeCamera();
     this.initaializeBackground();
+
+    this.muisicVolume = this.DataClass.getMuisicvolume()
+    this.trackplaying = Resources.level1track
+    setTimeout(() => {
+      if(Resources.level1track.isLoaded()) {
+        this.trackplaying.play(this.muisicVolume)
+      }
+    }, 200)
+
+    engine.input.gamepads.at(0).on('button', (event) => {
+      if(event.button === ex.Input.Buttons.Select) {
+          if(!this.paused) {
+              this.paused = true
+              this.trackplaying.pause()
+              engine.goToScene('pausescreen')
+          }
+      }
+  })
+  engine.input.keyboard.on("press", (KeyEvent) => {
+      if(KeyEvent.key == "Escape") {
+          if(!this.paused) {
+              this.paused = true
+              this.trackplaying.pause()
+              engine.goToScene('pausescreen')
+          }
+      }
+  });
+  }
+
+  onActivate() {
+    this.DataClass.setScene('level1')
+    if(this.paused) {
+      this.trackplaying.play()
+      this.paused = false
+    }
   }
 
   onPreUpdate() {
     this.scorelabel.updateText(`Score: ${this.DataClass.getScore()}`)
-    console.log(this.DataClass.getScore())
+    // console.log(this.DataClass.getScore())
+
+    if(Resources.level1track.isLoaded()) {
+      this.initializeAudio()
+    }
   }
 
   initaializeActors() {
@@ -34,11 +79,14 @@ export class Level1 extends ex.Scene {
     const platform1 = new Platform(0, 585, 90000, 20);
     const coin = new Coin(new ex.Vector(900, 500), 64, 64, new ex.Vector(1, 1), this.DataClass);
     this.scorelabel = new Scorelabel();
+    this.playerHP = new Hp(10, 20, this.DataClass, 1)
+    this.playerHP.scale = new ex.Vector(2,2)
 
     this.add(this.player);
     this.add(platform1);
     this.add(this.scorelabel);
     this.add(coin);
+    this.add(this.playerHP)
 
   }
   initaializeBackground() {
@@ -65,5 +113,40 @@ export class Level1 extends ex.Scene {
 
   resetLevel() {
     this.player.pos = new ex.Vector(100, 520);
+  }
+
+  initializeAudio() {
+    if(this.muisicVolume != 0) {
+      if (this.player.getHealth() <= 0 && this.dead == false) {
+          this.trackplaying.stop()
+          setTimeout(()=> {
+              // this.trackplaying = Resources.trackgameover
+              this.trackplaying.play(this.muisicVolume)
+              this.looping = true
+          }, 200)
+          this.dead = true
+      }
+      // if(Resources.level1track.getPlaybackPosition() +0.2 >= Resources.level1track.getTotalPlaybackDuration()){
+          this.looping = true
+      // }
+      // console.log(this.trackplaying.getPlaybackPosition(), this.trackplaying.getTotalPlaybackDuration() )
+      if(this.trackplaying.getPlaybackPosition() +0.2 >= this.trackplaying.getTotalPlaybackDuration() && this.looping ){
+          if(this.dead) {
+              this.trackplaying.stop()
+              // this.trackplaying = Resources.trackgameoverloop
+              setTimeout(()=> {
+                  this.trackplaying.stop()
+                  this.trackplaying.play(this.muisicVolume)
+              },200)
+          } else {
+              this.trackplaying.stop()
+              this.trackplaying = Resources.level1track
+              setTimeout(()=> {
+                  this.trackplaying.stop()
+                  this.trackplaying.play(this.muisicVolume)
+              },200)
+          }
+      }
+    }
   }
 }

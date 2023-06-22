@@ -25,12 +25,12 @@ import healthImageSrc from '../images/Heart&ManaUi.png'
 // import bgNightTownFrontImageSrc from '../images/Backgrounds/PNG/Night-Town/front.png'
 // import bgNightTownMiddleImageSrc from '../images/Backgrounds/PNG/Night-Town/middle.png'
 // import bgNightTownBackImageSrc from '../images/Backgrounds/PNG/Night-Town/back.png'
-// import overworld1AudioSrc from '../sounds/tracks/02_1_titles_LOOP.mp3'
+import level1trackAudioSrc from '../sounds/tracks/Dream.mp3'
 // import overworldInitAudioSrc from '../sounds/tracks/titles_INITIAL.mp3'
 // import gameoverAudioSrc from '../sounds/tracks/game_over_INITIAL.mp3'
 // import gameoverLoopAudioSrc from '../sounds/tracks/game_over_LOOP.mp3'
-// import pauseAudioSrc from '../sounds/090_Pause_02.wav'
-// import unpauseAudioSrc from '../sounds/096_Unpause_02.wav'
+import pauseAudioSrc from '../sounds/090_Pause_02.wav'
+import unpauseAudioSrc from '../sounds/096_Unpause_02.wav'
 import uiHoverAudioSrc from '../sounds/001_Hover_01.wav'
 // import bowHit1AudioSrc from '../sounds/47_Bow_Hit_01.wav'
 // import bowHit2AudioSrc from '../sounds/48_Bow_Hit_02.wav'
@@ -80,11 +80,11 @@ const Resources = {
     // sign: new ImageSource(signImageSrc),
     healthui: new ImageSource(healthImageSrc),
     // trackoverworldinit: new Sound(overworldInitAudioSrc),
-    // trackoverworld1: new Sound(overworld1AudioSrc),
+    level1track: new Sound(level1trackAudioSrc),
     // trackgameover: new Sound(gameoverAudioSrc),
     // trackgameoverloop: new Sound(gameoverLoopAudioSrc),
-    // pausesound: new Sound(pauseAudioSrc),
-    // unpausesound: new Sound(unpauseAudioSrc),
+    pausesound: new Sound(pauseAudioSrc),
+    unpausesound: new Sound(unpauseAudioSrc),
     uihoversound: new Sound(uiHoverAudioSrc),
     // enemyknight: [new ImageSource(idleImageSrc), new ImageSource(runImageSrc), new ImageSource(jumpImageSrc), new ImageSource(deathImageSrc), [new ImageSource(damageImageSrc), true],],
     // enemyskeleton: [new ImageSource(idleSkeletonImageSrc), new ImageSource(runSkeletonImageSrc), new ImageSource(idleSkeletonImageSrc), new ImageSource(deathSkeletonImageSrc), [new ImageSource(damageSkeletonImageSrc), false],],
@@ -112,6 +112,7 @@ const ResourceLoader = new Loader([
     Resources.playerjump, 
     Resources.playerjumptofall, 
     Resources.coin, 
+    Resources.level1track, 
     // Resources.playerattack1, 
     // Resources.playerattack2, 
     // Resources.trackoverworld1,
@@ -144,8 +145,8 @@ const ResourceLoader = new Loader([
     // Resources.bowhitsounds[0],
     // Resources.bowhitsounds[1],
     // Resources.bowhitsounds[2],
-    // Resources.pausesound,
-    // Resources.unpausesound,
+    Resources.pausesound,
+    Resources.unpausesound,
     Resources.uihoversound,
     // Resources.attack1sounds[0], 
     // Resources.attack1sounds[1], 
