@@ -68,7 +68,7 @@ export class Level1 extends ex.Scene {
   onPreUpdate() {
     this.scorelabel.updateText(`Score: ${this.DataClass.getScore()}`)
     // console.log(this.DataClass.getScore())
-
+    this.DataClass.setCurrentPlayerPosition(this.player.pos.x)
     if(Resources.level1track.isLoaded()) {
       this.initializeAudio()
     }
@@ -90,9 +90,9 @@ export class Level1 extends ex.Scene {
 
   }
   initaializeBackground() {
-    const foreground = new BackgroundClass(-2, -100, 50, new ex.Vector(1,1), 1,  Resources.background[0]);
-    const middleground = new BackgroundClass(-3, -125, -10, new ex.Vector(1,1), 0.8,  Resources.background[1]);
-    const background = new BackgroundClass(-4, -250, -150, new ex.Vector(1,1.2), 0.6,  Resources.background[2]);
+    const foreground = new BackgroundClass(-2, -100, 50, new ex.Vector(1,1), 1,  Resources.background[0], this.DataClass);
+    const middleground = new BackgroundClass(-3, -125, -10, new ex.Vector(1,1), 0.8,  Resources.background[1], this.DataClass);
+    const background = new BackgroundClass(-4, -250, -150, new ex.Vector(1,1.2), 0.6,  Resources.background[2], this.DataClass);
 
     this.add(foreground);
     this.add(middleground);
@@ -103,7 +103,7 @@ export class Level1 extends ex.Scene {
     let boundingBox = new ex.BoundingBox(
       0,
       -2000,
-      40000,
+      900000,
       610
     );
 
