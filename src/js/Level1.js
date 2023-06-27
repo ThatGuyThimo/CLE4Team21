@@ -7,6 +7,8 @@ import { Coin } from './Coin';
 import { Player } from './Player.js';
 import { Scorelabel } from './Scorelabel.js';
 import { Hp } from './Hp.js';
+import { Box } from './Obstacle.js';
+
 
 export class Level1 extends ex.Scene {
 
@@ -18,7 +20,8 @@ export class Level1 extends ex.Scene {
   muisicVolume
   playerHP
   paused
-
+  Box
+  
   constructor(DataClass) {
     super();
     this.DataClass = DataClass;
@@ -81,18 +84,23 @@ export class Level1 extends ex.Scene {
     this.scorelabel = new Scorelabel();
     this.playerHP = new Hp(10, 20, this.DataClass, 1)
     this.playerHP.scale = new ex.Vector(2,2)
+    const box1 = new Box(1200, 200, 100, 100, this.sprite);
+
+    
 
     this.add(this.player);
     this.add(platform1);
     this.add(this.scorelabel);
     this.add(coin);
     this.add(this.playerHP)
+    this.add(box1)
 
   }
   initaializeBackground() {
     const foreground = new BackgroundClass(-2, -100, 50, new ex.Vector(1,1), 1,  Resources.background[0]);
     const middleground = new BackgroundClass(-3, -125, -10, new ex.Vector(1,1), 0.8,  Resources.background[1]);
     const background = new BackgroundClass(-4, -250, -150, new ex.Vector(1,1.2), 0.6,  Resources.background[2]);
+
 
     this.add(foreground);
     this.add(middleground);

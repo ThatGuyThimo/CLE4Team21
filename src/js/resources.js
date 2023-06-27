@@ -61,9 +61,12 @@ import middelground from '../images/Middleground.png'
 import foreground from '../images/Foreground.png'
 import coinImageSrc from '../images/Coin.png'
 import coinanimImageSrc from '../images/Coinsheet.png'
+import boxImage from '../images/sign.png'
+
 
 const Resources = {
     
+    box: new ImageSource(boxImage),
     // hofbg1: new ImageSource(hofbg1Image),
     // tiledMap: new TiledMapResource(tiledmap),
     // blackscreen: new ImageSource(blackscreenImageSrc),
@@ -103,6 +106,7 @@ const Resources = {
 }
 
 const ResourceLoader = new Loader([
+    Resources.box, 
     Resources.uibuttons, 
     // Resources.hofbg1,
     Resources.playerdeath, 
