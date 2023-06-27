@@ -44,6 +44,8 @@ import boxImage from '../images/box.png'
 import trashImage from '../images/Trash.png'
 import PlantenbakImage from '../images/Plantenbak.png'
 import spikeImage from '../images/Spike.png'
+import blackScreenImageSrc from '../images/blackscreen.png';
+import gameoverImageSrc from '../images/GameOverSchermTitle.png'
 
 const Resources = {
     
@@ -77,7 +79,9 @@ const Resources = {
     crouchinganims: [new ImageSource(crouchImageSrc), new ImageSource(crouchTransitionImageSrc), new ImageSource(crouchWalkImageSrc)],
     playerhit: new ImageSource(damageImageSrc),
     coin: new ImageSource(coinImageSrc),
-    coinanim: new ImageSource(coinanimImageSrc)
+    coinanim: new ImageSource(coinanimImageSrc),
+    blackscreen: new ImageSource(blackScreenImageSrc),
+    gameover: new ImageSource(gameoverImageSrc)
 }
 
 const ResourceLoader = new Loader([
@@ -126,6 +130,8 @@ const ResourceLoader = new Loader([
     Resources.crouchingsounds[0], 
     Resources.crouchingsounds[1], 
     Resources.crouchingsounds[2], 
+    Resources.gameover,
+    Resources.blackscreen,
     ])
 
 export { Resources, ResourceLoader }

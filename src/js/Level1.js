@@ -7,7 +7,7 @@ import { Player } from './Player.js';
 import { Scorelabel } from './Scorelabel.js';
 import { Hp } from './Hp.js';
 import { levelChunks } from './LevelChunks.js';
-
+import { Endgame } from './Endgame.js'
 
 export class Level1 extends ex.Scene {
 
@@ -22,7 +22,8 @@ export class Level1 extends ex.Scene {
   trackIsLoaded = false
   isPlaying = false
   Box
-  
+  endgame
+
   constructor(DataClass) {
     super();
     this.DataClass = DataClass;
@@ -32,6 +33,9 @@ export class Level1 extends ex.Scene {
     this.initaializeActors();
     this.initaializeCamera();
     this.initaializeBackground();
+
+    this.endgame = new Endgame(250, 200, 3)
+    this.endgame.scale = ex.vec(3,3)
 
     this.levelchunks = new levelChunks(this.DataClass, 500)
 
@@ -74,6 +78,11 @@ export class Level1 extends ex.Scene {
     if(Resources.level1track.isLoaded()) {
       this.initializeAudio()
     }
+
+    if(this.player.getHealth() <= 0) {
+      this.add(this.endgame)
+  }
+
     if (this.player.pos.x ) {
 
     }
