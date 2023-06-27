@@ -7,7 +7,7 @@ import { Coin } from './Coin';
 import { Player } from './Player.js';
 import { Scorelabel } from './Scorelabel.js';
 import { Hp } from './Hp.js';
-import { Box } from './Obstacle.js';
+import { Box, Trash, Plantenbak, Spike } from './Obstacle.js';
 
 
 export class Level1 extends ex.Scene {
@@ -84,7 +84,11 @@ export class Level1 extends ex.Scene {
     this.scorelabel = new Scorelabel();
     this.playerHP = new Hp(10, 20, this.DataClass, 1)
     this.playerHP.scale = new ex.Vector(2,2)
-    const box1 = new Box(1200, 200, 100, 100, this.sprite);
+    const box1 = new Box(1200, 525, 30, 50)
+    const trash1 = new Trash(1500, 542, 30, 50)
+    const plantenbak1 = new Plantenbak(1800, 535, 30, 50)
+    const spike1 = new Spike(2100, 560, 30, 50)
+
 
     
 
@@ -94,6 +98,10 @@ export class Level1 extends ex.Scene {
     this.add(coin);
     this.add(this.playerHP)
     this.add(box1)
+    this.add(trash1)
+    this.add(plantenbak1)
+    this.add(spike1)
+
 
   }
   initaializeBackground() {

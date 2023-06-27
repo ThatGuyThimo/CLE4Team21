@@ -61,12 +61,17 @@ import middelground from '../images/Middleground.png'
 import foreground from '../images/Foreground.png'
 import coinImageSrc from '../images/Coin.png'
 import coinanimImageSrc from '../images/Coinsheet.png'
-import boxImage from '../images/sign.png'
-
+import boxImage from '../images/box.png'
+import trashImage from '../images/Trash.png'
+import PlantenbakImage from '../images/Plantenbak.png'
+import spikeImage from '../images/Spike.png'
 
 const Resources = {
     
+    plantenbak: new ImageSource(PlantenbakImage),
+    trash: new ImageSource(trashImage),
     box: new ImageSource(boxImage),
+    spike: new ImageSource(spikeImage),
     // hofbg1: new ImageSource(hofbg1Image),
     // tiledMap: new TiledMapResource(tiledmap),
     // blackscreen: new ImageSource(blackscreenImageSrc),
@@ -106,6 +111,9 @@ const Resources = {
 }
 
 const ResourceLoader = new Loader([
+    Resources.spike,
+    Resources.plantenbak,
+    Resources.trash, 
     Resources.box, 
     Resources.uibuttons, 
     // Resources.hofbg1,
