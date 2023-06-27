@@ -42,6 +42,8 @@ export class Coin extends ex.Actor {
   
       this.on('collisionstart', (event) => {
         if (event.other instanceof Player) {
+          let sound = Resources.changesound
+          sound.play(Dataclass.getSFXvolume())
           this.Dataclass.incrementScore();
           this.kill();
         }

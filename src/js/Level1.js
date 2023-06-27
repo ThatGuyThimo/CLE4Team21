@@ -113,7 +113,7 @@ export class Level1 extends ex.Scene {
     let boundingBox = new ex.BoundingBox(
       0,
       -2000,
-      900000,
+      9000000,
       610
     );
 

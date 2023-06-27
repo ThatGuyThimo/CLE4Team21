@@ -177,9 +177,18 @@ export class Player extends ex.Actor {
                 }
             }
             if (event.other._name == "shieldPowerUp") {
+                if(!this.shieldPowerUp) {
+                    let sound = Resources.shieldpowerupsound
+                    sound.play(this.DataClass.getSFXvolume())
+                }
                 this.shieldPowerUp = true
+
             }
             if (event.other._name == "speedPowerUp") {
+                if(!this.speedPowerUp) {
+                    let sound = Resources.speedpowerupsound
+                    sound.play(this.DataClass.getSFXvolume())
+                }
                 this.speedPowerUp = true
             }
         })

@@ -18,6 +18,7 @@ import healthImageSrc from '../images/Heart&ManaUi.png'
 import level1trackAudioSrc from '../sounds/tracks/Dream.mp3'
 import pauseAudioSrc from '../sounds/090_Pause_02.wav'
 import unpauseAudioSrc from '../sounds/096_Unpause_02.wav'
+import changeAudioSrc from '../sounds/Change.mp3'
 import uiHoverAudioSrc from '../sounds/001_Hover_01.wav'
 import jump_1AudioSrc from '../sounds/28_jump_01.wav'
 import jump_2AudioSrc from '../sounds/29_jump_02.wav'
@@ -28,6 +29,8 @@ import landing_3AudioSrc from '../sounds/47_Landing_03.wav'
 import crouch_1AudioSrc from '../sounds/16_Crouch_01.wav'
 import crouch_2AudioSrc from '../sounds/17_Crouch_02.wav'
 import crouch_3AudioSrc from '../sounds/18_Crouch_03.wav'
+import speedpowerupAudioSrc from '../sounds/slowdown.wav'
+import shieldpowerupAudioSrc from '../sounds/shield.mp3'
 import hit_1AudioSrc from '../sounds/01_Claw_01.wav'
 import hit_2AudioSrc from '../sounds/02_Claw_02.wav'
 import hit_3AudioSrc from '../sounds/03_Claw_03.wav'
@@ -63,6 +66,9 @@ const Resources = {
     pausesound: new Sound(pauseAudioSrc),
     unpausesound: new Sound(unpauseAudioSrc),
     uihoversound: new Sound(uiHoverAudioSrc),
+    changesound: new Sound(changeAudioSrc),
+    speedpowerupsound: new Sound(speedpowerupAudioSrc),
+    shieldpowerupsound: new Sound(shieldpowerupAudioSrc),
     background: [new ImageSource(foreground), new ImageSource(middelground), new ImageSource(background)],
     jumpingsounds: [new Sound(jump_1AudioSrc), new Sound(jump_2AudioSrc), new Sound(jump_3AudioSrc)],
     landingsounds: [new Sound(landing_1AudioSrc), new Sound(landing_2AudioSrc), new Sound(landing_3AudioSrc)],
@@ -76,6 +82,9 @@ const Resources = {
 
 const ResourceLoader = new Loader([
     Resources.spike,
+    Resources.changesound,
+    Resources.speedpowerupsound,
+    Resources.shieldpowerupsound,
     Resources.plantenbak,
     Resources.trash, 
     Resources.box, 
