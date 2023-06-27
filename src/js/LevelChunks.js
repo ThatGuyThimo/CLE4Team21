@@ -80,7 +80,7 @@ export class levelChunks {
                     break;
                 }
                 case 7 :{ //coin
-                    generatedChunk.push(new Coin(new ex.Vector(this.currentPos + (this.offset * index) ,500), 64, 64, new ex.Vector(1, 1), this.DataClass))
+                    generatedChunk.push(new Coin(new ex.Vector(this.currentPos + (this.offset * index) ,550), 64, 64, new ex.Vector(1, 1), this.DataClass))
                     break;
                 }
                 
