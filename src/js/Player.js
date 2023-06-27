@@ -1,5 +1,6 @@
 import * as ex from "excalibur"
 import { Resources } from "./resources"
+import { build } from "vite"
 
 // jouw eige classes gebruiken inheritance om over te erven van excalibur
 export class Player extends ex.Actor {
@@ -22,6 +23,11 @@ export class Player extends ex.Actor {
     multiplayer = false
     player
     speed
+    acceleration = 0
+    speedPowerUp = false
+    shieldPowerUp = false
+    shieldIsActive = false
+    speedIsActive = false
   
 
     /**
@@ -186,9 +192,24 @@ export class Player extends ex.Actor {
         this.addChild(this.attackHitbox)
 
         this.on('collisionstart', (event) => {
-            if (event.other._name == "enemy" && !this.hit && this.attacking == 0 && event.other._tagsMemo[0] != 'dead') {
-                this.takeDamage(1, event.contact.info.sideId)
-                this.hit = true
+            if (event.other._name == "damageObstacle" && !this.hit ) {
+                if(this.shieldPowerUp) {
+                    this.shieldPowerUp = false
+                    this.graphics.hide('bubblesprite')
+                    this.hit = true
+                    setTimeout(() => {
+                        this.hit = false
+                    }, 800)
+                } else {
+                    this.takeDamage(1, event.contact.info.sideId)
+                    this.hit = true
+                }
+            }
+            if (event.other._name == "shieldPowerUp") {
+                this.shieldPowerUp = true
+            }
+            if (event.other._name == "speedPowerUp") {
+                this.speedPowerUp = true
             }
         })
 
@@ -200,10 +221,35 @@ export class Player extends ex.Actor {
         // console.log(this.onGround)
         // console.log(this.vel.y)
 
-        if(this.crouching) {
-            this.vel.x = this.speed / 2
+        if(this.vel.x < 500 && !this.speedPowerUp) {
+            this.acceleration = (this.pos.x / 25000) * this.speed 
+            console.log(this.acceleration)
+        } else if(this.speedPowerUp && this.speedIsActive) {
+            this.speedIsActive = true
+            this.acceleration = this.acceleration -200
+            setTimeout(() => {
+                this.speedPowerUp = false
+                this.speedIsActive = false
+            },10000)
         } else {
-            this.vel.x = this.speed
+            this.acceleration = 305
+        }
+
+        if(this.shieldPowerUp && !this.shieldIsActive) {
+            this.shieldIsActive = true
+            let bubbleSprite = Resources.shieldbubble.toSprite()
+            bubbleSprite.opacity = 0.5
+            this.graphics.add("bubblesprite", bubbleSprite)
+            this.graphics.show("bubblesprite")
+        }
+
+        console.log(this.vel.x)
+
+
+        if(this.crouching) {
+            this.vel.x = (this.speed + this.acceleration) / 2
+        } else {
+            this.vel.x = this.speed + this.acceleration
         }
         this.DataClass.setPlayerXpos(this.pos.x)
         this.SFXVolume = localStorage.getItem('SFXvolume')
@@ -542,20 +588,20 @@ export class Player extends ex.Actor {
                 case  "D":
                     switch(this.crouching){
                         case true:
-                            this.vel.x = this.speed / 2 + 20
+                            this.vel.x = (this.speed + this.acceleration) / 2 + 20
                             break;
                         default:
-                            this.vel.x = this.speed + 20
+                            this.vel.x = (this.speed + this.acceleration) + 20
                             break;
                     }
                     break;
                 case "A":
                     switch(this.crouching){
                         case true:
-                            this.vel.x = this.speed / 2 - 20
+                            this.vel.x = (this.speed + this.acceleration) / 2 - 20
                             break;
                         default:
-                            this.vel.x = this.speed - 20
+                            this.vel.x = (this.speed + this.acceleration) - 20
                             break;
                     }
                     break;

@@ -18,6 +18,8 @@ export class Level1 extends ex.Scene {
   muisicVolume
   playerHP
   paused
+  trackIsLoaded = false
+  isPlaying = false
 
   constructor(DataClass) {
     super();
@@ -31,11 +33,6 @@ export class Level1 extends ex.Scene {
 
     this.muisicVolume = this.DataClass.getMuisicvolume()
     this.trackplaying = Resources.level1track
-    setTimeout(() => {
-      if(Resources.level1track.isLoaded()) {
-        this.trackplaying.play(this.muisicVolume)
-      }
-    }, 200)
 
     engine.input.gamepads.at(0).on('button', (event) => {
       if(event.button === ex.Input.Buttons.Select) {
@@ -60,20 +57,24 @@ export class Level1 extends ex.Scene {
   onActivate() {
     this.DataClass.setScene('level1')
     if(this.paused) {
-      this.trackplaying.play()
+      this.muisicVolume = this.DataClass.getMuisicvolume()
+      this.trackplaying.play(this.muisicVolume)
       this.paused = false
     }
   }
 
   onPreUpdate() {
     this.scorelabel.updateText(`Score: ${this.DataClass.getScore()}`)
-    // console.log(this.DataClass.getScore())
     this.DataClass.setCurrentPlayerPosition(this.player.pos.x)
     if(Resources.level1track.isLoaded()) {
       this.initializeAudio()
     }
     if (this.player.pos.x ) {
 
+    }
+    if(Resources.level1track.isLoaded() && !this.isPlaying) {
+      this.isPlaying = true
+      this.trackplaying.play(this.muisicVolume)
     }
   }
 
