@@ -13,7 +13,9 @@ import jumpImageSrc from '../images/120x80_PNGSheets/_Jump.png'
 import damageImageSrc from '../images/120x80_PNGSheets/_Hit.png'
 import fallImageSrc from '../images/120x80_PNGSheets/_Fall.png'
 import jumptofallImageSrc from '../images/120x80_PNGSheets/_JumpFallInbetween.png'
-import shieldbubbleImageSrc from '../images/ShieldBubble.png'
+import shieldbubbleImageSrc from '../images/ShieldBubbleEffect.png'
+import shieldbubbleSheetImageSrc from '../images/ShieldBubble.png'
+import slowdownSheetImageSrc from '../images/SlowDown.png'
 // import attack1ImageSrc from '../images/120x80_PNGSheets/_Attack.png'
 // import attack2ImageSrc from '../images/120x80_PNGSheets/_Attack2.png'
 import deathImageSrc from '../images/120x80_PNGSheets/_Death.png'
@@ -81,6 +83,8 @@ const Resources = {
     playerjump: new ImageSource(jumpImageSrc),
     playerjumptofall: new ImageSource(jumptofallImageSrc),
     shieldbubble: new ImageSource(shieldbubbleImageSrc),
+    shieldbubblesheet: new ImageSource(shieldbubbleSheetImageSrc),
+    slowdownsheet: new ImageSource(slowdownSheetImageSrc),
     playerfall: new ImageSource(fallImageSrc),
     // playerattack1: new ImageSource(attack1ImageSrc),
     // playerattack2: new ImageSource(attack2ImageSrc),
@@ -128,6 +132,8 @@ const ResourceLoader = new Loader([
     Resources.coin, 
     Resources.level1track, 
     Resources.shieldbubble, 
+    Resources.shieldbubblesheet, 
+    Resources.slowdownsheet, 
     // Resources.playerattack1, 
     // Resources.playerattack2, 
     // Resources.trackoverworld1,

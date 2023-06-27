@@ -8,6 +8,8 @@ import { Player } from './Player.js';
 import { Scorelabel } from './Scorelabel.js';
 import { Hp } from './Hp.js';
 import { Box, Trash, Plantenbak, Spike } from './Obstacle.js';
+import { SpeedPowerUp, ShieldPowerUp } from './Powerup.js';
+import { levelChunks } from './LevelChunks.js';
 
 
 export class Level1 extends ex.Scene {
@@ -33,6 +35,8 @@ export class Level1 extends ex.Scene {
     this.initaializeActors();
     this.initaializeCamera();
     this.initaializeBackground();
+
+    this.levelchunks = new levelChunks(this.DataClass, 500)
 
     this.muisicVolume = this.DataClass.getMuisicvolume()
     this.trackplaying = Resources.level1track
@@ -66,7 +70,8 @@ export class Level1 extends ex.Scene {
     }
   }
 
-  onPreUpdate() {
+  onPreUpdate(Engine) {
+    this.levelchunks.createChunk(Engine)
     this.scorelabel.updateText(`Score: ${this.DataClass.getScore()}`)
     this.DataClass.setCurrentPlayerPosition(this.player.pos.x)
     if(Resources.level1track.isLoaded()) {
@@ -92,20 +97,22 @@ export class Level1 extends ex.Scene {
     const trash1 = new Trash(1500, 542, 30, 50)
     const plantenbak1 = new Plantenbak(1800, 535, 30, 50)
     const spike1 = new Spike(2100, 560, 30, 50)
-
+    const shieldpowerup = new ShieldPowerUp(500, 560, 50, 50)
+    const speedpowerup = new SpeedPowerUp(8000, 560, 50, 50)
 
     
 
     this.add(this.player);
     this.add(platform1);
     this.add(this.scorelabel);
-    this.add(coin);
+    // this.add(coin);
     this.add(this.playerHP)
-    this.add(box1)
-    this.add(trash1)
-    this.add(plantenbak1)
-    this.add(spike1)
-
+    // this.add(box1)
+    // this.add(trash1)
+    // this.add(plantenbak1)
+    // this.add(spike1)
+    // this.add(shieldpowerup)
+    // this.add(speedpowerup)
 
   }
   initaializeBackground() {

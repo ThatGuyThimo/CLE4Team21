@@ -1,6 +1,5 @@
 import * as ex from "excalibur"
 import { Resources } from "./resources"
-import { build } from "vite"
 
 // jouw eige classes gebruiken inheritance om over te erven van excalibur
 export class Player extends ex.Actor {
@@ -19,7 +18,7 @@ export class Player extends ex.Actor {
     transition
     attackTransition
     DataClass
-    attackHitbox
+    bubbleBox
     multiplayer = false
     player
     speed
@@ -181,21 +180,26 @@ export class Player extends ex.Actor {
         // this.playerAnimations['crouchAttack'] = ex.Animation.fromSpriteSheet(crouchAttack, ex.range(0, 3), 100);
         this.playerAnimations['deathAnim'] = ex.Animation.fromSpriteSheet(deathAnim, ex.range(0, 9), 100, ex.AnimationStrategy.Freeze);
         this.playerAnimations['playerHit'] = hitAnim;
-        this.attackHitbox = new ex.Actor({
-            x: 0,
-            y: 0,
-            name: 'attackbox',
+        this.bubbleBox = new ex.Actor({
+            x: -5,
+            y: 20,
+            name: 'bubblebox',
             collisionType: ex.CollisionType.Passive,
             collider: ex.Shape.Box(20, 40, ex.Vector.Half, ex.vec(0, 20))
         })
+                    let bubbleSprite = Resources.shieldbubble.toSprite()
+            bubbleSprite.opacity = 0.5
+            bubbleSprite.scale = ex.vec(1.5,1.5)
+        this.bubbleBox.graphics.add("bubblesprite", bubbleSprite)
 
-        this.addChild(this.attackHitbox)
+        this.addChild(this.bubbleBox)
 
         this.on('collisionstart', (event) => {
             if (event.other._name == "damageObstacle" && !this.hit ) {
                 if(this.shieldPowerUp) {
                     this.shieldPowerUp = false
-                    this.graphics.hide('bubblesprite')
+                    this.shieldIsActive = false
+                    this.bubbleBox.graphics.hide('bubblesprite')
                     this.hit = true
                     setTimeout(() => {
                         this.hit = false
@@ -221,35 +225,40 @@ export class Player extends ex.Actor {
         // console.log(this.onGround)
         // console.log(this.vel.y)
 
-        if(this.vel.x < 500 && !this.speedPowerUp) {
-            this.acceleration = (this.pos.x / 25000) * this.speed 
-            console.log(this.acceleration)
-        } else if(this.speedPowerUp && this.speedIsActive) {
+        if(this.vel.x < 500 && !this.speedPowerUp && !this.speedIsActive) {
+            this.acceleration = (this.pos.x / 10000) * this.speed 
+            // console.log(this.acceleration)
+        } else if(this.speedPowerUp && !this.speedIsActive) {
             this.speedIsActive = true
-            this.acceleration = this.acceleration -200
+            if(this.acceleration > 200) {
+                this.acceleration = this.acceleration - 200
+                console.log(this.acceleration)
+            } else {
+                this.acceleration = 0
+                console.log(this.acceleration)
+            }
             setTimeout(() => {
                 this.speedPowerUp = false
                 this.speedIsActive = false
             },10000)
-        } else {
+        } else if(!this.speedPowerUp) {
             this.acceleration = 305
         }
 
         if(this.shieldPowerUp && !this.shieldIsActive) {
             this.shieldIsActive = true
-            let bubbleSprite = Resources.shieldbubble.toSprite()
-            bubbleSprite.opacity = 0.5
-            this.graphics.add("bubblesprite", bubbleSprite)
-            this.graphics.show("bubblesprite")
+            this.bubbleBox.graphics.show("bubblesprite")
         }
 
-        console.log(this.vel.x)
+        // console.log(this.vel.x)
 
 
         if(this.crouching) {
             this.vel.x = (this.speed + this.acceleration) / 2
-        } else {
+        } else if(this.health > 0){
             this.vel.x = this.speed + this.acceleration
+        } else {
+            this.vel.x = 0
         }
         this.DataClass.setPlayerXpos(this.pos.x)
         this.SFXVolume = localStorage.getItem('SFXvolume')
@@ -308,35 +317,15 @@ export class Player extends ex.Actor {
         // Hitbox state machine
         switch(true) {
             case this.facing == "R" && !this.crouching:
-                if(this.attacking) {
-                    this.attackHitbox.collider.set(ex.Shape.Box(50, 40, ex.Vector.Half, ex.vec(25, 20)))
-                } else {
-                    this.attackHitbox.collider.set(ex.Shape.Box(1, 40, ex.Vector.Half, ex.vec(0, 20)))
-                }
                 this.collider.set(ex.Shape.Box(20, 40, ex.Vector.Half, ex.vec(-5, 20)))
                 break;
             case this.facing == "L" && !this.crouching:
-                if(this.attacking) {
-                    this.attackHitbox.collider.set(ex.Shape.Box(50, 40, ex.Vector.Half, ex.vec(-25, 20)))
-                } else {
-                    this.attackHitbox.collider.set(ex.Shape.Box(1, 40, ex.Vector.Half, ex.vec(0, 20)))
-                }
                 this.collider.set(ex.Shape.Box(20, 40, ex.Vector.Half, ex.vec(5, 20)))
                 break;
             case this.facing == "R" && this.crouching:
-                if(this.attacking) {
-                    this.attackHitbox.collider.set(ex.Shape.Box(50, 20, ex.Vector.Half, ex.vec(10,30)))
-                } else {
-                    this.attackHitbox.collider.set(ex.Shape.Box(1, 20, ex.Vector.Half, ex.vec(10,30)))
-                }
                 this.collider.set(ex.Shape.Box(20, 20, ex.Vector.Half, ex.vec(-5,30)))
                 break;
             case this.facing == "L" && this.crouching:
-                if (this.attacking) {
-                    this.attackHitbox.collider.set(ex.Shape.Box(50, 20, ex.Vector.Half, ex.vec(-10, 30)))
-                } else {
-                    this.attackHitbox.collider.set(ex.Shape.Box(1, 20, ex.Vector.Half, ex.vec(-10, 30)))
-                }
                 this.collider.set(ex.Shape.Box(20, 20, ex.Vector.Half, ex.vec(5, 30)))
                 break;
         }
@@ -526,13 +515,13 @@ export class Player extends ex.Actor {
         
 
         // Input logic
-        if(engine.input.keyboard.isHeld(ex.Input.Keys.D) && !this.hit && this.attacking == 0 && this.health > 0 && this.player == 1 || engine.input.keyboard.isHeld(ex.Input.Keys.Right) && this.player == 1 && !this.hit && this.attacking == 0 && this.health > 0 || this.player == 1 && !this.multiplayer && engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadRight) && !this.hit && this.attacking == 0 && this.health > 0 || this.player == 2 && this.multiplayer && engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadRight) && !this.hit && this.attacking == 0 && this.health > 0) {
-            this.movePlayer("D")
-        }
+        // if(engine.input.keyboard.isHeld(ex.Input.Keys.D) && this.attacking == 0 && this.health > 0 && this.player == 1 || engine.input.keyboard.isHeld(ex.Input.Keys.Right) && this.player == 1 && this.attacking == 0 && this.health > 0 || this.player == 1 && !this.multiplayer && engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadRight) && this.attacking == 0 && this.health > 0 || this.player == 2 && this.multiplayer && engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadRight) && this.attacking == 0 && this.health > 0) {
+        //     this.movePlayer("D")
+        // }
 
-        if(engine.input.keyboard.isHeld(ex.Input.Keys.A) && !this.hit && this.attacking == 0 && this.health > 0 && this.player == 1 || engine.input.keyboard.isHeld(ex.Input.Keys.Left) && this.player == 1 && !this.hit && this.attacking == 0 && this.health > 0 || this.player == 1 && !this.multiplayer && engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadLeft) && !this.hit && this.attacking == 0 && this.health > 0 || this.player == 2 && this.multiplayer && engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadLeft) && !this.hit && this.attacking == 0 && this.health > 0) {
-            this.movePlayer("A")
-        }  
+        // if(engine.input.keyboard.isHeld(ex.Input.Keys.A) && this.attacking == 0 && this.health > 0 && this.player == 1 || engine.input.keyboard.isHeld(ex.Input.Keys.Left) && this.player == 1 && this.attacking == 0 && this.health > 0 || this.player == 1 && !this.multiplayer && engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadLeft) && this.attacking == 0 && this.health > 0 || this.player == 2 && this.multiplayer && engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadLeft) && this.attacking == 0 && this.health > 0) {
+        //     this.movePlayer("A")
+        // }  
 
         // if (engine.input.keyboard.wasPressed(ex.Input.Keys.Space) && !this.hit && this.attacking == 0 && this.health > 0 && this.player == 1 || engine.input.keyboard.wasPressed(ex.Input.Keys.ArrowUp) && this.player == 1 && !this.hit && this.attacking == 0 && this.health > 0 ) {
         //     if(this.onGround && !this.jumped) {
@@ -540,19 +529,19 @@ export class Player extends ex.Actor {
         //         this.jumped = true
         //     }
         // }
-        if (engine.input.keyboard.isHeld(ex.Input.Keys.Space) && !this.hit && this.attacking == 0 && this.health > 0 && this.player == 1 || engine.input.keyboard.isHeld(ex.Input.Keys.ArrowUp) && this.player == 1 && !this.hit && this.attacking == 0 && this.health > 0 ) {
+        if (engine.input.keyboard.isHeld(ex.Input.Keys.Space) && this.attacking == 0 && this.health > 0 && this.player == 1 || engine.input.keyboard.isHeld(ex.Input.Keys.ArrowUp) && this.player == 1 && this.attacking == 0 && this.health > 0 ) {
             // if(this.onGround && !this.jumped) {
                 this.jump()
                 this.jumped = true
             // }
         }
 
-        if (engine.input.keyboard.isHeld(ex.Input.Keys.S) && !this.hit && this.attacking == 0 && this.health > 0 && this.player == 1 || engine.input.keyboard.isHeld(ex.Input.Keys.ArrowDown) && this.player == 1 && !this.hit && this.attacking == 0 && this.health > 0 || this.player == 1 && !this.multiplayer && engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadDown) && !this.hit && this.attacking == 0 && this.health > 0 || this.player == 2 && this.multiplayer && engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadDown) && !this.hit && this.attacking == 0 && this.health > 0) {
-            if(this.onGround) {
-                this.crouch()
-                this.crouching = true
-            }
-        }
+        // if (engine.input.keyboard.isHeld(ex.Input.Keys.S) && this.attacking == 0 && this.health > 0 && this.player == 1 || engine.input.keyboard.isHeld(ex.Input.Keys.ArrowDown) && this.player == 1 && this.attacking == 0 && this.health > 0 || this.player == 1 && !this.multiplayer && engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadDown) && this.attacking == 0 && this.health > 0 || this.player == 2 && this.multiplayer && engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadDown) && this.attacking == 0 && this.health > 0) {
+        //     if(this.onGround) {
+        //         this.crouch()
+        //         this.crouching = true
+        //     }
+        // }
         // if (engine.input.keyboard.wasPressed(ex.Input.Keys.F) && !this.hit && this.health > 0 && this.player == 1 ){
         //     this.attacking += 1
         //     this.attack(this.attacking)
@@ -561,7 +550,7 @@ export class Player extends ex.Actor {
         //controller once input
 
         engine.input.gamepads.at(0).on('button', (event) => {
-            if (event.button === ex.Input.Buttons.Face1 && this.player == 1 && !this.multiplayer && !this.hit && this.attacking == 0 && this.health > 0 || event.button === ex.Input.Buttons.Face1 && this.player == 2 && this.multiplayer && !this.hit && this.attacking == 0 && this.health > 0 || event.button === ex.Input.Buttons.DpadUp && this.player == 1 && !this.multiplayer && !this.hit && this.attacking == 0 && this.health > 0 || event.button === ex.Input.Buttons.DpadUp && this.player == 2 && this.multiplayer && !this.hit && this.attacking == 0 && this.health > 0) {
+            if (event.button === ex.Input.Buttons.Face1 && this.player == 1 && !this.multiplayer && this.attacking == 0 && this.health > 0 || event.button === ex.Input.Buttons.Face1 && this.player == 2 && this.multiplayer && this.attacking == 0 && this.health > 0 || event.button === ex.Input.Buttons.DpadUp && this.player == 1 && !this.multiplayer && this.attacking == 0 && this.health > 0 || event.button === ex.Input.Buttons.DpadUp && this.player == 2 && this.multiplayer && this.attacking == 0 && this.health > 0) {
             // if(this.onGround && !this.jumped) {
                 this.jump()
                 this.jumped = true
@@ -693,28 +682,27 @@ export class Player extends ex.Actor {
                     this.playerAnimations['playerHit'].flipHorizontal = true
                     break;
             }
-            switch(side) {
-                case 3: 
-                    this.vel.y = -200
-                    setTimeout(() => {
-                        this.vel.x = -200
-                    }, 50)
-                    break;
-                case 1:
-                    this.vel.y = -200
-                    setTimeout(() => {
-                        this.vel.x = 200
-                    }, 50)
-                    break;
-            }
+            // switch(side) {
+            //     case 3: 
+            //         this.vel.y = -200
+            //         setTimeout(() => {
+            //             this.vel.x = -200
+            //         }, 50)
+            //         break;
+            //     case 1:
+            //         this.vel.y = -200
+            //         setTimeout(() => {
+            //             this.vel.x = 200
+            //         }, 50)
+            //         break;
+            // }
             this.graphics.use(this.playerAnimations['playerHit'])
             this.health -= ammount
             let sound = Resources.playerhitsounds[ex.randomIntInRange(0, 3)] 
             sound.play(this.SFXVolume)
             setTimeout(() => {
                 this.hit = false
-                this.graphics.use(this.playerAnimations['idleAnim'])
-            }, 800)
+            }, 1000)
         }
         this.DataClass.setPlayerHealth(this.player, this.health)
     }
