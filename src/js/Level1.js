@@ -72,11 +72,14 @@ export class Level1 extends ex.Scene {
     if(Resources.level1track.isLoaded()) {
       this.initializeAudio()
     }
+    if (this.player.pos.x ) {
+
+    }
   }
 
   initaializeActors() {
     this.player = new Player(new ex.Vector(100, 520), this.DataClass, false, 1, new ex.Vector(1.5,1.5), 200);
-    const platform1 = new Platform(0, 585, 90000, 20);
+    const platform1 = new Platform(0, 585, 5000, 20, this.DataClass);
     const coin = new Coin(new ex.Vector(900, 500), 64, 64, new ex.Vector(1, 1), this.DataClass);
     this.scorelabel = new Scorelabel();
     this.playerHP = new Hp(10, 20, this.DataClass, 1)

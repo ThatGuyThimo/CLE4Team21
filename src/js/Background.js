@@ -71,10 +71,8 @@ export class BackgroundClass extends ex.Actor {
     }
 
     onPreUpdate() {
-        console.log(this.DataClass.getPlayerPosition() + " " + this.newOffset)
         if (this.DataClass.getPlayerPosition() > this.newOffset) {
             this.graphics.add(this.createGroup())
-            console.log("added bg")
         }
     }
 
