@@ -38,8 +38,6 @@ export class Coin extends ex.Actor {
     const animation = ex.Animation.fromSpriteSheet(coinSheet, ex.range(0, 5), 150);
 
     this.scale = scale
-    // const sprite = Resources.coin.toSprite();
-    // this.graphics.use(sprite);
     this.graphics.use(animation);
   
       this.on('collisionstart', (event) => {

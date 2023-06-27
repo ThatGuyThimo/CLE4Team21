@@ -110,26 +110,6 @@ export class Player extends ex.Actor {
             }
         })
 
-        // let attackAnim1 = ex.SpriteSheet.fromImageSource({
-        //     image: Resources.playerattack1,
-        //     grid: {
-        //         rows: 1,
-        //         columns: 4,
-        //         spriteWidth: 120,
-        //         spriteHeight: 80
-        //     }
-        // })
-
-        // let attackAnim2 = ex.SpriteSheet.fromImageSource({
-        //     image: Resources.playerattack2,
-        //     grid: {
-        //         rows: 1,
-        //         columns: 6,
-        //         spriteWidth: 120,
-        //         spriteHeight: 80
-        //     }
-        // })
-
         let crouching = Resources.crouchinganims[0].toSprite()
 
         let crouchTarnsition = Resources.crouchinganims[1].toSprite()
@@ -143,16 +123,6 @@ export class Player extends ex.Actor {
                 spriteHeight: 80
             }
         })
-
-        // let crouchAttack = ex.SpriteSheet.fromImageSource({
-        //     image: Resources.crouchinganims[3],
-        //     grid: {
-        //         rows: 1,
-        //         columns: 4,
-        //         spriteWidth: 120,
-        //         spriteHeight: 80
-        //     }
-        // })
 
         let deathAnim = ex.SpriteSheet.fromImageSource({
             image: Resources.playerdeath,
@@ -172,12 +142,9 @@ export class Player extends ex.Actor {
         this.playerAnimations['jumpAnim'] = ex.Animation.fromSpriteSheet(jumpSheet, ex.range(0, 2), 50);
         this.playerAnimations['fallAnim'] = ex.Animation.fromSpriteSheet(fallSheet, ex.range(0, 2), 50);
         this.playerAnimations['jumpToFallAnim'] = ex.Animation.fromSpriteSheet(jumpToFallSheet, ex.range(0, 1), 50);
-        // this.playerAnimations['attackAnim1'] = ex.Animation.fromSpriteSheet(attackAnim1, ex.range(0, 3), 100);
-        // this.playerAnimations['attackAnim2'] = ex.Animation.fromSpriteSheet(attackAnim2, ex.range(0, 5), 100);
         this.playerAnimations['crouching'] = crouching;
         this.playerAnimations['crouchTarnsition'] = crouchTarnsition;
         this.playerAnimations['crouchWalking'] = ex.Animation.fromSpriteSheet(crouchWalking, ex.range(0, 5), 50);
-        // this.playerAnimations['crouchAttack'] = ex.Animation.fromSpriteSheet(crouchAttack, ex.range(0, 3), 100);
         this.playerAnimations['deathAnim'] = ex.Animation.fromSpriteSheet(deathAnim, ex.range(0, 9), 100, ex.AnimationStrategy.Freeze);
         this.playerAnimations['playerHit'] = hitAnim;
         this.bubbleBox = new ex.Actor({
@@ -220,22 +187,14 @@ export class Player extends ex.Actor {
     }
 
     update(engine) {
-        // console.log(this.animPlaying)
-        // console.log(this.facing)
-        // console.log(this.onGround)
-        // console.log(this.vel.y)
-
         if(this.vel.x < 500 && !this.speedPowerUp && !this.speedIsActive) {
             this.acceleration = (this.pos.x / 10000) * this.speed 
-            // console.log(this.acceleration)
         } else if(this.speedPowerUp && !this.speedIsActive) {
             this.speedIsActive = true
             if(this.acceleration > 200) {
                 this.acceleration = this.acceleration - 200
-                console.log(this.acceleration)
             } else {
                 this.acceleration = 0
-                console.log(this.acceleration)
             }
             setTimeout(() => {
                 this.speedPowerUp = false
@@ -250,9 +209,6 @@ export class Player extends ex.Actor {
             this.bubbleBox.graphics.show("bubblesprite")
         }
 
-        // console.log(this.vel.x)
-
-
         if(this.crouching) {
             this.vel.x = (this.speed + this.acceleration) / 2
         } else if(this.health > 0){
@@ -260,8 +216,10 @@ export class Player extends ex.Actor {
         } else {
             this.vel.x = 0
         }
+
         this.DataClass.setPlayerXpos(this.pos.x)
         this.SFXVolume = localStorage.getItem('SFXvolume')
+
         if(this.vel.y == 0) {
             if(this.onGround == false) {
                 let sound = Resources.landingsounds[ex.randomIntInRange(0, 2)] 
@@ -272,30 +230,7 @@ export class Player extends ex.Actor {
         } else {
             this.onGround = false
         }
-        // if(
-        //     this.onGround && 
-        //     !engine.input.keyboard.isHeld(ex.Input.Keys.D) && 
-        //     !engine.input.keyboard.isHeld(ex.Input.Keys.Right) &&  
-        //     !engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadRight) && 
-        //     !engine.input.keyboard.isHeld(ex.Input.Keys.A) && 
-        //     !engine.input.keyboard.isHeld(ex.Input.Keys.Left) && 
-        //     !engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadLeft) && 
-        //     this.player == 1 && 
-        //     !this.multiplayer ||
-        //     !engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadLeft) && 
-        //     !engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadRight) &&
-        //     this.player == 2 &&
-        //     this.multiplayer ||
-        //     !engine.input.keyboard.isHeld(ex.Input.Keys.D) && 
-        //     !engine.input.keyboard.isHeld(ex.Input.Keys.Right) &&  
-        //     !engine.input.keyboard.isHeld(ex.Input.Keys.A) && 
-        //     !engine.input.keyboard.isHeld(ex.Input.Keys.Left) && 
-        //     this.player == 1 && 
-        //     this.multiplayer
-        //     ) {
 
-        //     this.vel.x = 0
-        // }
         if(
             this.crouching &&
             !engine.input.keyboard.isHeld(ex.Input.Keys.S) && 
@@ -490,82 +425,20 @@ export class Player extends ex.Actor {
                     this.graphics.use(this.playerAnimations['deathAnim'])
                 break;
         }
-
-        // // Attacking logic
-        // if (this.attacking > 2) {
-        //     this.attacking = 0
-        // } else if(this.attacking != 0) {
-        //     // console.log(this.tags)
-        //     this.vel.x = 0
-        //     if(this.attackTransition.currentFrameIndex == 3 && this.attacking == 1 && !this.crouching) { 
-        //         this.attackHitbox.removeTag('attacking1')
-        //         this.attacking = 0    
-        //     }
-        //     if(this.attackTransition.currentFrameIndex == 5 && this.attacking >= 2 && !this.crouching) {
-        //         this.attackHitbox.removeTag('attacking1')
-        //         this.attackHitbox.removeTag('attacking2')
-        //         this.attacking = 0
-        //     }
-        //     if (this.crouching && this.attackTransition.currentFrameIndex == 3) {
-        //         this.attackHitbox.removeTag('attacking1')
-        //         this.attacking = 0
-        //     }
-
-        // }
-        
+       
 
         // Input logic
-        // if(engine.input.keyboard.isHeld(ex.Input.Keys.D) && this.attacking == 0 && this.health > 0 && this.player == 1 || engine.input.keyboard.isHeld(ex.Input.Keys.Right) && this.player == 1 && this.attacking == 0 && this.health > 0 || this.player == 1 && !this.multiplayer && engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadRight) && this.attacking == 0 && this.health > 0 || this.player == 2 && this.multiplayer && engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadRight) && this.attacking == 0 && this.health > 0) {
-        //     this.movePlayer("D")
-        // }
-
-        // if(engine.input.keyboard.isHeld(ex.Input.Keys.A) && this.attacking == 0 && this.health > 0 && this.player == 1 || engine.input.keyboard.isHeld(ex.Input.Keys.Left) && this.player == 1 && this.attacking == 0 && this.health > 0 || this.player == 1 && !this.multiplayer && engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadLeft) && this.attacking == 0 && this.health > 0 || this.player == 2 && this.multiplayer && engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadLeft) && this.attacking == 0 && this.health > 0) {
-        //     this.movePlayer("A")
-        // }  
-
-        // if (engine.input.keyboard.wasPressed(ex.Input.Keys.Space) && !this.hit && this.attacking == 0 && this.health > 0 && this.player == 1 || engine.input.keyboard.wasPressed(ex.Input.Keys.ArrowUp) && this.player == 1 && !this.hit && this.attacking == 0 && this.health > 0 ) {
-        //     if(this.onGround && !this.jumped) {
-        //         this.jump()
-        //         this.jumped = true
-        //     }
-        // }
         if (engine.input.keyboard.isHeld(ex.Input.Keys.Space) && this.attacking == 0 && this.health > 0 && this.player == 1 || engine.input.keyboard.isHeld(ex.Input.Keys.ArrowUp) && this.player == 1 && this.attacking == 0 && this.health > 0 ) {
-            // if(this.onGround && !this.jumped) {
-                this.jump()
-                this.jumped = true
-            // }
+            this.jump()
+            this.jumped = true
         }
 
-        // if (engine.input.keyboard.isHeld(ex.Input.Keys.S) && this.attacking == 0 && this.health > 0 && this.player == 1 || engine.input.keyboard.isHeld(ex.Input.Keys.ArrowDown) && this.player == 1 && this.attacking == 0 && this.health > 0 || this.player == 1 && !this.multiplayer && engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadDown) && this.attacking == 0 && this.health > 0 || this.player == 2 && this.multiplayer && engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadDown) && this.attacking == 0 && this.health > 0) {
-        //     if(this.onGround) {
-        //         this.crouch()
-        //         this.crouching = true
-        //     }
-        // }
-        // if (engine.input.keyboard.wasPressed(ex.Input.Keys.F) && !this.hit && this.health > 0 && this.player == 1 ){
-        //     this.attacking += 1
-        //     this.attack(this.attacking)
-        // }
-
         //controller once input
-
         engine.input.gamepads.at(0).on('button', (event) => {
             if (event.button === ex.Input.Buttons.Face1 && this.player == 1 && !this.multiplayer && this.attacking == 0 && this.health > 0 || event.button === ex.Input.Buttons.Face1 && this.player == 2 && this.multiplayer && this.attacking == 0 && this.health > 0 || event.button === ex.Input.Buttons.DpadUp && this.player == 1 && !this.multiplayer && this.attacking == 0 && this.health > 0 || event.button === ex.Input.Buttons.DpadUp && this.player == 2 && this.multiplayer && this.attacking == 0 && this.health > 0) {
-            // if(this.onGround && !this.jumped) {
-                this.jump()
-                this.jumped = true
-            // }
+            this.jump()
+            this.jumped = true
             }
-            // if (event.button === ex.Input.Buttons.Face2 && !this.hit && this.health > 0 && this.player == 1 && !this.multiplayer || event.button === ex.Input.Buttons.Face2 && !this.hit && this.health > 0 && this.player == 2 && this.multiplayer) {
-            //     if (!this.attacked) {
-            //         this.attacked = true
-            //         this.attacking += 1
-            //         this.attack(this.attacking)
-            //         setTimeout(() => {
-            //             this.attacked = false
-            //         }, 10)
-            //     }
-            // }
         })
             
     }
@@ -599,7 +472,6 @@ export class Player extends ex.Actor {
         }
     }
     jump() {
-        // console.log('jumped')
         if(!this.jumped && this.onGround){
             this.transition.reset()
             this.vel.y = -300
@@ -615,56 +487,6 @@ export class Player extends ex.Actor {
             sound.play(this.SFXVolume)
         }
     }
-    // attack(value) {
-    //     if(value == 1) {
-    //         if (this.animPlaying != 10) {
-    //             this.animPlaying = 10
-    //             switch(this.facing){
-    //                 case "R":
-    //                     this.playerAnimations['attackAnim1'].flipHorizontal = false
-    //                     this.playerAnimations['crouchAttack'].flipHorizontal = false
-    //                     break;
-    //                 case "L":
-    //                     this.playerAnimations['crouchAttack'].flipHorizontal = true
-    //                     this.playerAnimations['attackAnim1'].flipHorizontal = true
-    //                     break;
-    //             }
-    //             if (!this.crouching) {
-    //                 this.attackTransition = this.playerAnimations['attackAnim1']
-    //                 this.attackTransition.reset()
-    //             } else {
-    //                 this.attackTransition = this.playerAnimations['crouchAttack']
-    //                 this.attackTransition.reset()
-    //             }
-
-    //             this.attackHitbox.addTag('attacking1');  
-    //             this.graphics.use(this.attackTransition)
-    //             let sound = Resources.attack1sounds[ex.randomIntInRange(0, 2)] 
-    //             sound.play(this.SFXVolume)
-    //         }
-    //     } else if (value == 2) {
-    //         if (this.animPlaying != 11) {
-    //             this.animPlaying = 11
-    //             switch(this.facing){
-    //                 case "R":
-    //                     this.playerAnimations['attackAnim2'].flipHorizontal = false
-    //                     break;
-    //                 case "L":
-    //                     this.playerAnimations['attackAnim2'].flipHorizontal = true
-    //                     break;
-    //             }
-    //             if (!this.crouching) {
-    //                 this.attackHitbox.removeTag('attacking1')
-    //                 this.attackHitbox.addTag('attacking2');  
-    //                 this.attackTransition = this.playerAnimations['attackAnim2']
-    //                 this.attackTransition.reset()
-    //                 this.graphics.use(this.attackTransition)
-    //                 let sound = Resources.attack2sounds[ex.randomIntInRange(0, 2)] 
-    //                 sound.play(this.SFXVolume)
-    //             }
-    //         }
-    //     }
-    // }
     getHealth() {
         return this.health
     }
@@ -682,20 +504,6 @@ export class Player extends ex.Actor {
                     this.playerAnimations['playerHit'].flipHorizontal = true
                     break;
             }
-            // switch(side) {
-            //     case 3: 
-            //         this.vel.y = -200
-            //         setTimeout(() => {
-            //             this.vel.x = -200
-            //         }, 50)
-            //         break;
-            //     case 1:
-            //         this.vel.y = -200
-            //         setTimeout(() => {
-            //             this.vel.x = 200
-            //         }, 50)
-            //         break;
-            // }
             this.graphics.use(this.playerAnimations['playerHit'])
             this.health -= ammount
             let sound = Resources.playerhitsounds[ex.randomIntInRange(0, 3)] 

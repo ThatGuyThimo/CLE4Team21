@@ -25,10 +25,6 @@ export class Button extends ex.ScreenElement {
 
     this.graphics.add('idle', this.buttonSprite)
     this.graphics.add('hover', this.buttonSpriteHover)
-    // let text = new ex.Text({
-    //   text: this.text,
-    //   font: new ex.Font({ size: this.fontSize}),
-    // })
 
     let label = new ex.Label	({
       pos: ex.vec(20, 10),
@@ -40,8 +36,6 @@ export class Button extends ex.ScreenElement {
     
     this.addChild(label)
     this.graphics.show('idle')
-    // this.graphics.show(text)
-    // this.addChild(text)
     this.on('pointerup', () => {
       this.clicked = true
     })

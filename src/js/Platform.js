@@ -9,7 +9,6 @@ export class Platform extends ex.Actor {
       pos: new ex.Vector(x, y),
       width: width,
       height: height,
-      // color: color, // Set the color to Green
       anchor: ex.Vector.Zero,
       collisionType: ex.CollisionType.Fixed,
       collisionGroup: ex.CollisionGroupManager.groupByName('Platform'),

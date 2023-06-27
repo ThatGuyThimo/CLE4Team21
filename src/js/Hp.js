@@ -47,12 +47,6 @@ export class Hp extends ex.ScreenElement {
         this.graphics.add('EmptyHeart', hearts.getSprite(3, 0))
         this.graphics.add('Player', playerText)
 
-        // let layer = new ex.GraphicsLayer({name: 'MPlayer', order: 1})
-        // layer.graphics.push({items: {graphic: playerText, options: {offset: new ex.Vector(-5, 8)} }})
-
-        // this.graphics.show(layer.graphics[0].graphic)
-        // console.log(layer)
-
         switch(this.player) {
             case 1:
                 playerText.text = "P1"

@@ -2,12 +2,8 @@ import * as ex from "excalibur"
 import { Resources, ResourceLoader } from './resources.js'
 import { Button } from './Button.js'
 import { Slider } from "./Slider.js"
-// import { CheckBox } from "./checkbox.js"
-
 export class Settings extends ex.Scene {
     backButton
-    // multiplayerButton
-    // multiplayer
     SFXVolumeSlider
     SFXVolume = 0.5
     MuisicVolumeSlider
@@ -42,13 +38,8 @@ export class Settings extends ex.Scene {
         this.backButton = new Button(16, 16, 50, 50, this.DataClass)
         this.backButton.setText('Back', 12)
         this.backButton.setImages(uiButtonsSpriteSheet.sprites[117], uiButtonsSpriteSheet.sprites[3])
-
-        // this.multiplayerButton = new CheckBox(16, 16, 50, 160, this.DataClass)
-        // this.multiplayerButton.setText('Multiplayer', 12)
-        // this.multiplayerButton.setImages(uiButtonsSpriteSheet.sprites[108], uiButtonsSpriteSheet.sprites[125])
         
         this.add(this.backButton)
-        // this.add(this.multiplayerButton)
         this.add(this.SFXVolumeSlider)
         this.add(this.MuisicVolumeSlider)
     }
@@ -57,10 +48,8 @@ export class Settings extends ex.Scene {
         if (localStorage.getItem('SFXvolume') != undefined && localStorage.getItem('Muisicvolume')) {
             this.MuisicVolumeSlider.setValue(localStorage.getItem('Muisicvolume'))
             this.SFXVolumeSlider.setValue(localStorage.getItem('SFXvolume'))
-            // this.multiplayerButton.setActive(JSON.parse(localStorage.getItem('Multiplayer')))
             this.DataClass.setSFXvolume(this.SFXVolume)
             this.DataClass.setMuisicvolume(this.MuisicVolume)
-            // this.DataClass.setMultiplayer(this.multiplayer)
         }
     }
 
@@ -73,19 +62,14 @@ export class Settings extends ex.Scene {
             this.backButton.setClicked()
             Engine.goToScene(this.DataClass.getScene())
         }
-        // if(this.multiplayerButton.isClicked()) {
-        //     this.multiplayerButton.setClicked()
-        // }
         this.MuisicVolume = this.MuisicVolumeSlider.getValue()
         this.SFXVolume = this.SFXVolumeSlider.getValue()
-        // this.multiplayer = this.multiplayerButton.getActive()
 
         localStorage.setItem('SFXvolume', this.SFXVolume)
         localStorage.setItem('Muisicvolume', this.MuisicVolume)
-        // localStorage.setItem('Multiplayer', this.multiplayer)
+
         this.DataClass.setSFXvolume(this.SFXVolume)
         this.DataClass.setMuisicvolume(this.MuisicVolume)
-        // this.DataClass.setMultiplayer(this.multiplayer)
     }
 
     getSettings() {
@@ -93,24 +77,18 @@ export class Settings extends ex.Scene {
         if (localStorage.getItem('SFXvolume') != undefined && localStorage.getItem('Muisicvolume')) {
             this.MuisicVolume = localStorage.getItem('Muisicvolume')
             this.SFXVolume = localStorage.getItem('SFXvolume')
-            // this.multiplayer = JSON.parse(localStorage.getItem('Multiplayer'))
             this.DataClass.setSFXvolume(this.SFXVolume)
             this.DataClass.setMuisicvolume(this.MuisicVolume)
-            // this.DataClass.setMultiplayer(this.multiplayer)
         } else {
             this.MuisicVolume = 0.5
             this.SFXVolume = 0.5
-            // this.multiplayer = false
             this.DataClass.setSFXvolume(this.SFXVolume)
             this.DataClass.setMuisicvolume(this.MuisicVolume)
-            // this.DataClass.setMultiplayer(this.multiplayer)
             localStorage.setItem('SFXvolume', this.SFXVolume)
             localStorage.setItem('Muisicvolume', this.MuisicVolume)
-            // localStorage.setItem('Multiplayer', this.multiplayer)
         }
         settings['SFXVolume'] = this.SFXVolume
         settings['MuisicVolume'] = this.MuisicVolume
-        // settings['Multiplayer'] = this.Multiplayer
         return settings
     }
 }
