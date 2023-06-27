@@ -18,11 +18,8 @@ export class PauseScreen extends ex.Scene {
 
     onInitialize(Engine) {
 
-
-        // this.lastScene = localStorage.getItem('Scene')
         this.lastScene = this.DataClass.getScene()
         this.DataClass.setScene('pausescreen')
-        // localStorage.setItem('Scene', 'pausescreen')
 
         let uiButtonsSpriteSheet = ex.SpriteSheet.fromImageSource({
             image: Resources.uibuttons,

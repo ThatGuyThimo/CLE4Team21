@@ -43,6 +43,9 @@ export class Game extends ex.Engine {
       this.add('pausescreen', this.pausescreen)
       this.goToScene('mainmenu')
     }
+    onPreUpdate() {
+      this.settings.getSettings()
+    }
   }
   
   new Game();

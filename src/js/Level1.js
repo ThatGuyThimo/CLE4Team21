@@ -3,11 +3,10 @@ import { Resources, ResourceLoader } from './resources.js';
 
 import { Platform } from './Platform';
 import { BackgroundClass } from './Background.js';
-import { Coin } from './Coin';
 import { Player } from './Player.js';
 import { Scorelabel } from './Scorelabel.js';
 import { Hp } from './Hp.js';
-import { Box, Trash, Plantenbak, Spike } from './Obstacle.js';
+import { levelChunks } from './LevelChunks.js';
 
 
 export class Level1 extends ex.Scene {
@@ -20,6 +19,8 @@ export class Level1 extends ex.Scene {
   muisicVolume
   playerHP
   paused
+  trackIsLoaded = false
+  isPlaying = false
   Box
   
   constructor(DataClass) {
@@ -32,13 +33,10 @@ export class Level1 extends ex.Scene {
     this.initaializeCamera();
     this.initaializeBackground();
 
+    this.levelchunks = new levelChunks(this.DataClass, 500)
+
     this.muisicVolume = this.DataClass.getMuisicvolume()
     this.trackplaying = Resources.level1track
-    setTimeout(() => {
-      if(Resources.level1track.isLoaded()) {
-        this.trackplaying.play(this.muisicVolume)
-      }
-    }, 200)
 
     engine.input.gamepads.at(0).on('button', (event) => {
       if(event.button === ex.Input.Buttons.Select) {
@@ -63,44 +61,40 @@ export class Level1 extends ex.Scene {
   onActivate() {
     this.DataClass.setScene('level1')
     if(this.paused) {
-      this.trackplaying.play()
+      this.muisicVolume = this.DataClass.getMuisicvolume()
+      this.trackplaying.play(this.muisicVolume)
       this.paused = false
     }
   }
 
-  onPreUpdate() {
+  onPreUpdate(Engine) {
+    this.levelchunks.createChunk(Engine)
     this.scorelabel.updateText(`Score: ${this.DataClass.getScore()}`)
-    // console.log(this.DataClass.getScore())
     this.DataClass.setCurrentPlayerPosition(this.player.pos.x)
     if(Resources.level1track.isLoaded()) {
       this.initializeAudio()
+    }
+    if (this.player.pos.x ) {
+
+    }
+    if(Resources.level1track.isLoaded() && !this.isPlaying) {
+      this.isPlaying = true
+      this.trackplaying.play(this.muisicVolume)
     }
   }
 
   initaializeActors() {
     this.player = new Player(new ex.Vector(100, 520), this.DataClass, false, 1, new ex.Vector(1.5,1.5), 200);
-    const platform1 = new Platform(0, 585, 90000, 20);
-    const coin = new Coin(new ex.Vector(900, 500), 64, 64, new ex.Vector(1, 1), this.DataClass);
+    const platform1 = new Platform(0, 585, 5000, 20, this.DataClass);
     this.scorelabel = new Scorelabel();
     this.playerHP = new Hp(10, 20, this.DataClass, 1)
     this.playerHP.scale = new ex.Vector(2,2)
-    const box1 = new Box(1200, 525, 30, 50)
-    const trash1 = new Trash(1500, 542, 30, 50)
-    const plantenbak1 = new Plantenbak(1800, 535, 30, 50)
-    const spike1 = new Spike(2100, 560, 30, 50)
-
-
     
 
     this.add(this.player);
     this.add(platform1);
     this.add(this.scorelabel);
-    this.add(coin);
     this.add(this.playerHP)
-    this.add(box1)
-    this.add(trash1)
-    this.add(plantenbak1)
-    this.add(spike1)
 
 
   }
@@ -119,7 +113,7 @@ export class Level1 extends ex.Scene {
     let boundingBox = new ex.BoundingBox(
       0,
       -2000,
-      900000,
+      9000000,
       610
     );
 
@@ -142,10 +136,7 @@ export class Level1 extends ex.Scene {
           }, 200)
           this.dead = true
       }
-      // if(Resources.level1track.getPlaybackPosition() +0.2 >= Resources.level1track.getTotalPlaybackDuration()){
-          this.looping = true
-      // }
-      // console.log(this.trackplaying.getPlaybackPosition(), this.trackplaying.getTotalPlaybackDuration() )
+      this.looping = true
       if(this.trackplaying.getPlaybackPosition() +0.2 >= this.trackplaying.getTotalPlaybackDuration() && this.looping ){
           if(this.dead) {
               this.trackplaying.stop()

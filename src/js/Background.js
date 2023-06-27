@@ -1,18 +1,3 @@
-// import * as ex from 'excalibur';
-
-// export class Background extends ex.Actor {
-//   constructor(x, y, width, height, image) {
-//     super({
-//       pos: new ex.Vector(x, y),
-//       width: width,
-//       height: height,
-//       anchor: ex.Vector.Zero,
-//     });
-
-//     const sprite = new ex.Sprite(image);
-//     this.graphics.use(sprite);
-//   }
-// }
 import * as ex from "excalibur"
 
 export class BackgroundClass extends ex.Actor {
@@ -71,10 +56,8 @@ export class BackgroundClass extends ex.Actor {
     }
 
     onPreUpdate() {
-        console.log(this.DataClass.getPlayerPosition() + " " + this.newOffset)
         if (this.DataClass.getPlayerPosition() > this.newOffset) {
             this.graphics.add(this.createGroup())
-            console.log("added bg")
         }
     }
 

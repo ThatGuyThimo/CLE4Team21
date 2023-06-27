@@ -1,15 +1,24 @@
 import * as ex from 'excalibur';
 
 export class Platform extends ex.Actor {
-  constructor(x, y, width, height) {
+
+  DataClass
+
+  constructor(x, y, width, height, DataClass) {
     super({
       pos: new ex.Vector(x, y),
       width: width,
       height: height,
-      // color: color, // Set the color to Green
       anchor: ex.Vector.Zero,
       collisionType: ex.CollisionType.Fixed,
       collisionGroup: ex.CollisionGroupManager.groupByName('Platform'),
     });
+    this.DataClass = DataClass
+  }
+
+  onPreUpdate() {
+    if(this.DataClass.getPlayerPosition() +1000 > this.width + this.pos.x){
+      this.pos.x = this.width + this.pos.x -1000
+    }
   }
 }

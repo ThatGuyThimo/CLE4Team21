@@ -18,10 +18,15 @@ export class Player extends ex.Actor {
     transition
     attackTransition
     DataClass
-    attackHitbox
+    bubbleBox
     multiplayer = false
     player
     speed
+    acceleration = 0
+    speedPowerUp = false
+    shieldPowerUp = false
+    shieldIsActive = false
+    speedIsActive = false
   
 
     /**
@@ -105,26 +110,6 @@ export class Player extends ex.Actor {
             }
         })
 
-        // let attackAnim1 = ex.SpriteSheet.fromImageSource({
-        //     image: Resources.playerattack1,
-        //     grid: {
-        //         rows: 1,
-        //         columns: 4,
-        //         spriteWidth: 120,
-        //         spriteHeight: 80
-        //     }
-        // })
-
-        // let attackAnim2 = ex.SpriteSheet.fromImageSource({
-        //     image: Resources.playerattack2,
-        //     grid: {
-        //         rows: 1,
-        //         columns: 6,
-        //         spriteWidth: 120,
-        //         spriteHeight: 80
-        //     }
-        // })
-
         let crouching = Resources.crouchinganims[0].toSprite()
 
         let crouchTarnsition = Resources.crouchinganims[1].toSprite()
@@ -138,16 +123,6 @@ export class Player extends ex.Actor {
                 spriteHeight: 80
             }
         })
-
-        // let crouchAttack = ex.SpriteSheet.fromImageSource({
-        //     image: Resources.crouchinganims[3],
-        //     grid: {
-        //         rows: 1,
-        //         columns: 4,
-        //         spriteWidth: 120,
-        //         spriteHeight: 80
-        //     }
-        // })
 
         let deathAnim = ex.SpriteSheet.fromImageSource({
             image: Resources.playerdeath,
@@ -167,46 +142,93 @@ export class Player extends ex.Actor {
         this.playerAnimations['jumpAnim'] = ex.Animation.fromSpriteSheet(jumpSheet, ex.range(0, 2), 50);
         this.playerAnimations['fallAnim'] = ex.Animation.fromSpriteSheet(fallSheet, ex.range(0, 2), 50);
         this.playerAnimations['jumpToFallAnim'] = ex.Animation.fromSpriteSheet(jumpToFallSheet, ex.range(0, 1), 50);
-        // this.playerAnimations['attackAnim1'] = ex.Animation.fromSpriteSheet(attackAnim1, ex.range(0, 3), 100);
-        // this.playerAnimations['attackAnim2'] = ex.Animation.fromSpriteSheet(attackAnim2, ex.range(0, 5), 100);
         this.playerAnimations['crouching'] = crouching;
         this.playerAnimations['crouchTarnsition'] = crouchTarnsition;
         this.playerAnimations['crouchWalking'] = ex.Animation.fromSpriteSheet(crouchWalking, ex.range(0, 5), 50);
-        // this.playerAnimations['crouchAttack'] = ex.Animation.fromSpriteSheet(crouchAttack, ex.range(0, 3), 100);
         this.playerAnimations['deathAnim'] = ex.Animation.fromSpriteSheet(deathAnim, ex.range(0, 9), 100, ex.AnimationStrategy.Freeze);
         this.playerAnimations['playerHit'] = hitAnim;
-        this.attackHitbox = new ex.Actor({
-            x: 0,
-            y: 0,
-            name: 'attackbox',
+        this.bubbleBox = new ex.Actor({
+            x: -5,
+            y: 20,
+            name: 'bubblebox',
             collisionType: ex.CollisionType.Passive,
             collider: ex.Shape.Box(20, 40, ex.Vector.Half, ex.vec(0, 20))
         })
+                    let bubbleSprite = Resources.shieldbubble.toSprite()
+            bubbleSprite.opacity = 0.5
+            bubbleSprite.scale = ex.vec(1.5,1.5)
+        this.bubbleBox.graphics.add("bubblesprite", bubbleSprite)
 
-        this.addChild(this.attackHitbox)
+        this.addChild(this.bubbleBox)
 
         this.on('collisionstart', (event) => {
-            if (event.other._name == "enemy" && !this.hit && this.attacking == 0 && event.other._tagsMemo[0] != 'dead') {
-                this.takeDamage(1, event.contact.info.sideId)
-                this.hit = true
+            if (event.other._name == "damageObstacle" && !this.hit ) {
+                if(this.shieldPowerUp) {
+                    this.shieldPowerUp = false
+                    this.shieldIsActive = false
+                    this.bubbleBox.graphics.hide('bubblesprite')
+                    this.hit = true
+                    setTimeout(() => {
+                        this.hit = false
+                    }, 800)
+                } else {
+                    this.takeDamage(1, event.contact.info.sideId)
+                    this.hit = true
+                }
+            }
+            if (event.other._name == "shieldPowerUp") {
+                if(!this.shieldPowerUp) {
+                    let sound = Resources.shieldpowerupsound
+                    sound.play(this.DataClass.getSFXvolume())
+                }
+                this.shieldPowerUp = true
+
+            }
+            if (event.other._name == "speedPowerUp") {
+                if(!this.speedPowerUp) {
+                    let sound = Resources.speedpowerupsound
+                    sound.play(this.DataClass.getSFXvolume())
+                }
+                this.speedPowerUp = true
             }
         })
 
     }
 
     update(engine) {
-        // console.log(this.animPlaying)
-        // console.log(this.facing)
-        // console.log(this.onGround)
-        // console.log(this.vel.y)
+        if(this.vel.x < 500 && !this.speedPowerUp && !this.speedIsActive) {
+            this.acceleration = (this.pos.x / 10000) * this.speed 
+        } else if(this.speedPowerUp && !this.speedIsActive) {
+            this.speedIsActive = true
+            if(this.acceleration > 200) {
+                this.acceleration = this.acceleration - 200
+            } else {
+                this.acceleration = 0
+            }
+            setTimeout(() => {
+                this.speedPowerUp = false
+                this.speedIsActive = false
+            },10000)
+        } else if(!this.speedPowerUp) {
+            this.acceleration = 305
+        }
+
+        if(this.shieldPowerUp && !this.shieldIsActive) {
+            this.shieldIsActive = true
+            this.bubbleBox.graphics.show("bubblesprite")
+        }
 
         if(this.crouching) {
-            this.vel.x = this.speed / 2
+            this.vel.x = (this.speed + this.acceleration) / 2
+        } else if(this.health > 0){
+            this.vel.x = this.speed + this.acceleration
         } else {
-            this.vel.x = this.speed
+            this.vel.x = 0
         }
+
         this.DataClass.setPlayerXpos(this.pos.x)
         this.SFXVolume = localStorage.getItem('SFXvolume')
+
         if(this.vel.y == 0) {
             if(this.onGround == false) {
                 let sound = Resources.landingsounds[ex.randomIntInRange(0, 2)] 
@@ -217,30 +239,7 @@ export class Player extends ex.Actor {
         } else {
             this.onGround = false
         }
-        // if(
-        //     this.onGround && 
-        //     !engine.input.keyboard.isHeld(ex.Input.Keys.D) && 
-        //     !engine.input.keyboard.isHeld(ex.Input.Keys.Right) &&  
-        //     !engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadRight) && 
-        //     !engine.input.keyboard.isHeld(ex.Input.Keys.A) && 
-        //     !engine.input.keyboard.isHeld(ex.Input.Keys.Left) && 
-        //     !engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadLeft) && 
-        //     this.player == 1 && 
-        //     !this.multiplayer ||
-        //     !engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadLeft) && 
-        //     !engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadRight) &&
-        //     this.player == 2 &&
-        //     this.multiplayer ||
-        //     !engine.input.keyboard.isHeld(ex.Input.Keys.D) && 
-        //     !engine.input.keyboard.isHeld(ex.Input.Keys.Right) &&  
-        //     !engine.input.keyboard.isHeld(ex.Input.Keys.A) && 
-        //     !engine.input.keyboard.isHeld(ex.Input.Keys.Left) && 
-        //     this.player == 1 && 
-        //     this.multiplayer
-        //     ) {
 
-        //     this.vel.x = 0
-        // }
         if(
             this.crouching &&
             !engine.input.keyboard.isHeld(ex.Input.Keys.S) && 
@@ -262,35 +261,15 @@ export class Player extends ex.Actor {
         // Hitbox state machine
         switch(true) {
             case this.facing == "R" && !this.crouching:
-                if(this.attacking) {
-                    this.attackHitbox.collider.set(ex.Shape.Box(50, 40, ex.Vector.Half, ex.vec(25, 20)))
-                } else {
-                    this.attackHitbox.collider.set(ex.Shape.Box(1, 40, ex.Vector.Half, ex.vec(0, 20)))
-                }
                 this.collider.set(ex.Shape.Box(20, 40, ex.Vector.Half, ex.vec(-5, 20)))
                 break;
             case this.facing == "L" && !this.crouching:
-                if(this.attacking) {
-                    this.attackHitbox.collider.set(ex.Shape.Box(50, 40, ex.Vector.Half, ex.vec(-25, 20)))
-                } else {
-                    this.attackHitbox.collider.set(ex.Shape.Box(1, 40, ex.Vector.Half, ex.vec(0, 20)))
-                }
                 this.collider.set(ex.Shape.Box(20, 40, ex.Vector.Half, ex.vec(5, 20)))
                 break;
             case this.facing == "R" && this.crouching:
-                if(this.attacking) {
-                    this.attackHitbox.collider.set(ex.Shape.Box(50, 20, ex.Vector.Half, ex.vec(10,30)))
-                } else {
-                    this.attackHitbox.collider.set(ex.Shape.Box(1, 20, ex.Vector.Half, ex.vec(10,30)))
-                }
                 this.collider.set(ex.Shape.Box(20, 20, ex.Vector.Half, ex.vec(-5,30)))
                 break;
             case this.facing == "L" && this.crouching:
-                if (this.attacking) {
-                    this.attackHitbox.collider.set(ex.Shape.Box(50, 20, ex.Vector.Half, ex.vec(-10, 30)))
-                } else {
-                    this.attackHitbox.collider.set(ex.Shape.Box(1, 20, ex.Vector.Half, ex.vec(-10, 30)))
-                }
                 this.collider.set(ex.Shape.Box(20, 20, ex.Vector.Half, ex.vec(5, 30)))
                 break;
         }
@@ -455,82 +434,20 @@ export class Player extends ex.Actor {
                     this.graphics.use(this.playerAnimations['deathAnim'])
                 break;
         }
-
-        // // Attacking logic
-        // if (this.attacking > 2) {
-        //     this.attacking = 0
-        // } else if(this.attacking != 0) {
-        //     // console.log(this.tags)
-        //     this.vel.x = 0
-        //     if(this.attackTransition.currentFrameIndex == 3 && this.attacking == 1 && !this.crouching) { 
-        //         this.attackHitbox.removeTag('attacking1')
-        //         this.attacking = 0    
-        //     }
-        //     if(this.attackTransition.currentFrameIndex == 5 && this.attacking >= 2 && !this.crouching) {
-        //         this.attackHitbox.removeTag('attacking1')
-        //         this.attackHitbox.removeTag('attacking2')
-        //         this.attacking = 0
-        //     }
-        //     if (this.crouching && this.attackTransition.currentFrameIndex == 3) {
-        //         this.attackHitbox.removeTag('attacking1')
-        //         this.attacking = 0
-        //     }
-
-        // }
-        
+       
 
         // Input logic
-        if(engine.input.keyboard.isHeld(ex.Input.Keys.D) && !this.hit && this.attacking == 0 && this.health > 0 && this.player == 1 || engine.input.keyboard.isHeld(ex.Input.Keys.Right) && this.player == 1 && !this.hit && this.attacking == 0 && this.health > 0 || this.player == 1 && !this.multiplayer && engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadRight) && !this.hit && this.attacking == 0 && this.health > 0 || this.player == 2 && this.multiplayer && engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadRight) && !this.hit && this.attacking == 0 && this.health > 0) {
-            this.movePlayer("D")
+        if (engine.input.keyboard.isHeld(ex.Input.Keys.Space) && this.attacking == 0 && this.health > 0 && this.player == 1 || engine.input.keyboard.isHeld(ex.Input.Keys.ArrowUp) && this.player == 1 && this.attacking == 0 && this.health > 0 ) {
+            this.jump()
+            this.jumped = true
         }
-
-        if(engine.input.keyboard.isHeld(ex.Input.Keys.A) && !this.hit && this.attacking == 0 && this.health > 0 && this.player == 1 || engine.input.keyboard.isHeld(ex.Input.Keys.Left) && this.player == 1 && !this.hit && this.attacking == 0 && this.health > 0 || this.player == 1 && !this.multiplayer && engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadLeft) && !this.hit && this.attacking == 0 && this.health > 0 || this.player == 2 && this.multiplayer && engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadLeft) && !this.hit && this.attacking == 0 && this.health > 0) {
-            this.movePlayer("A")
-        }  
-
-        // if (engine.input.keyboard.wasPressed(ex.Input.Keys.Space) && !this.hit && this.attacking == 0 && this.health > 0 && this.player == 1 || engine.input.keyboard.wasPressed(ex.Input.Keys.ArrowUp) && this.player == 1 && !this.hit && this.attacking == 0 && this.health > 0 ) {
-        //     if(this.onGround && !this.jumped) {
-        //         this.jump()
-        //         this.jumped = true
-        //     }
-        // }
-        if (engine.input.keyboard.isHeld(ex.Input.Keys.Space) && !this.hit && this.attacking == 0 && this.health > 0 && this.player == 1 || engine.input.keyboard.isHeld(ex.Input.Keys.ArrowUp) && this.player == 1 && !this.hit && this.attacking == 0 && this.health > 0 ) {
-            // if(this.onGround && !this.jumped) {
-                this.jump()
-                this.jumped = true
-            // }
-        }
-
-        if (engine.input.keyboard.isHeld(ex.Input.Keys.S) && !this.hit && this.attacking == 0 && this.health > 0 && this.player == 1 || engine.input.keyboard.isHeld(ex.Input.Keys.ArrowDown) && this.player == 1 && !this.hit && this.attacking == 0 && this.health > 0 || this.player == 1 && !this.multiplayer && engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadDown) && !this.hit && this.attacking == 0 && this.health > 0 || this.player == 2 && this.multiplayer && engine.input.gamepads.at(0).getButton(ex.Input.Buttons.DpadDown) && !this.hit && this.attacking == 0 && this.health > 0) {
-            if(this.onGround) {
-                this.crouch()
-                this.crouching = true
-            }
-        }
-        // if (engine.input.keyboard.wasPressed(ex.Input.Keys.F) && !this.hit && this.health > 0 && this.player == 1 ){
-        //     this.attacking += 1
-        //     this.attack(this.attacking)
-        // }
 
         //controller once input
-
         engine.input.gamepads.at(0).on('button', (event) => {
-            if (event.button === ex.Input.Buttons.Face1 && this.player == 1 && !this.multiplayer && !this.hit && this.attacking == 0 && this.health > 0 || event.button === ex.Input.Buttons.Face1 && this.player == 2 && this.multiplayer && !this.hit && this.attacking == 0 && this.health > 0 || event.button === ex.Input.Buttons.DpadUp && this.player == 1 && !this.multiplayer && !this.hit && this.attacking == 0 && this.health > 0 || event.button === ex.Input.Buttons.DpadUp && this.player == 2 && this.multiplayer && !this.hit && this.attacking == 0 && this.health > 0) {
-            // if(this.onGround && !this.jumped) {
-                this.jump()
-                this.jumped = true
-            // }
+            if (event.button === ex.Input.Buttons.Face1 && this.player == 1 && !this.multiplayer && this.attacking == 0 && this.health > 0 || event.button === ex.Input.Buttons.Face1 && this.player == 2 && this.multiplayer && this.attacking == 0 && this.health > 0 || event.button === ex.Input.Buttons.DpadUp && this.player == 1 && !this.multiplayer && this.attacking == 0 && this.health > 0 || event.button === ex.Input.Buttons.DpadUp && this.player == 2 && this.multiplayer && this.attacking == 0 && this.health > 0) {
+            this.jump()
+            this.jumped = true
             }
-            // if (event.button === ex.Input.Buttons.Face2 && !this.hit && this.health > 0 && this.player == 1 && !this.multiplayer || event.button === ex.Input.Buttons.Face2 && !this.hit && this.health > 0 && this.player == 2 && this.multiplayer) {
-            //     if (!this.attacked) {
-            //         this.attacked = true
-            //         this.attacking += 1
-            //         this.attack(this.attacking)
-            //         setTimeout(() => {
-            //             this.attacked = false
-            //         }, 10)
-            //     }
-            // }
         })
             
     }
@@ -542,20 +459,20 @@ export class Player extends ex.Actor {
                 case  "D":
                     switch(this.crouching){
                         case true:
-                            this.vel.x = this.speed / 2 + 20
+                            this.vel.x = (this.speed + this.acceleration) / 2 + 20
                             break;
                         default:
-                            this.vel.x = this.speed + 20
+                            this.vel.x = (this.speed + this.acceleration) + 20
                             break;
                     }
                     break;
                 case "A":
                     switch(this.crouching){
                         case true:
-                            this.vel.x = this.speed / 2 - 20
+                            this.vel.x = (this.speed + this.acceleration) / 2 - 20
                             break;
                         default:
-                            this.vel.x = this.speed - 20
+                            this.vel.x = (this.speed + this.acceleration) - 20
                             break;
                     }
                     break;
@@ -564,7 +481,6 @@ export class Player extends ex.Actor {
         }
     }
     jump() {
-        // console.log('jumped')
         if(!this.jumped && this.onGround){
             this.transition.reset()
             this.vel.y = -300
@@ -580,56 +496,6 @@ export class Player extends ex.Actor {
             sound.play(this.SFXVolume)
         }
     }
-    // attack(value) {
-    //     if(value == 1) {
-    //         if (this.animPlaying != 10) {
-    //             this.animPlaying = 10
-    //             switch(this.facing){
-    //                 case "R":
-    //                     this.playerAnimations['attackAnim1'].flipHorizontal = false
-    //                     this.playerAnimations['crouchAttack'].flipHorizontal = false
-    //                     break;
-    //                 case "L":
-    //                     this.playerAnimations['crouchAttack'].flipHorizontal = true
-    //                     this.playerAnimations['attackAnim1'].flipHorizontal = true
-    //                     break;
-    //             }
-    //             if (!this.crouching) {
-    //                 this.attackTransition = this.playerAnimations['attackAnim1']
-    //                 this.attackTransition.reset()
-    //             } else {
-    //                 this.attackTransition = this.playerAnimations['crouchAttack']
-    //                 this.attackTransition.reset()
-    //             }
-
-    //             this.attackHitbox.addTag('attacking1');  
-    //             this.graphics.use(this.attackTransition)
-    //             let sound = Resources.attack1sounds[ex.randomIntInRange(0, 2)] 
-    //             sound.play(this.SFXVolume)
-    //         }
-    //     } else if (value == 2) {
-    //         if (this.animPlaying != 11) {
-    //             this.animPlaying = 11
-    //             switch(this.facing){
-    //                 case "R":
-    //                     this.playerAnimations['attackAnim2'].flipHorizontal = false
-    //                     break;
-    //                 case "L":
-    //                     this.playerAnimations['attackAnim2'].flipHorizontal = true
-    //                     break;
-    //             }
-    //             if (!this.crouching) {
-    //                 this.attackHitbox.removeTag('attacking1')
-    //                 this.attackHitbox.addTag('attacking2');  
-    //                 this.attackTransition = this.playerAnimations['attackAnim2']
-    //                 this.attackTransition.reset()
-    //                 this.graphics.use(this.attackTransition)
-    //                 let sound = Resources.attack2sounds[ex.randomIntInRange(0, 2)] 
-    //                 sound.play(this.SFXVolume)
-    //             }
-    //         }
-    //     }
-    // }
     getHealth() {
         return this.health
     }
@@ -647,28 +513,13 @@ export class Player extends ex.Actor {
                     this.playerAnimations['playerHit'].flipHorizontal = true
                     break;
             }
-            switch(side) {
-                case 3: 
-                    this.vel.y = -200
-                    setTimeout(() => {
-                        this.vel.x = -200
-                    }, 50)
-                    break;
-                case 1:
-                    this.vel.y = -200
-                    setTimeout(() => {
-                        this.vel.x = 200
-                    }, 50)
-                    break;
-            }
             this.graphics.use(this.playerAnimations['playerHit'])
             this.health -= ammount
             let sound = Resources.playerhitsounds[ex.randomIntInRange(0, 3)] 
             sound.play(this.SFXVolume)
             setTimeout(() => {
                 this.hit = false
-                this.graphics.use(this.playerAnimations['idleAnim'])
-            }, 800)
+            }, 1000)
         }
         this.DataClass.setPlayerHealth(this.player, this.health)
     }
