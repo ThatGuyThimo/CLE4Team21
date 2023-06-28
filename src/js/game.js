@@ -24,7 +24,7 @@ export class Game extends ex.Engine {
         displayMode: ex.DisplayMode.FitScreenAndFill,
         maxFps: 60,
       });
-      const devtool = new DevTool(this);
+      // const devtool = new DevTool(this);
       ex.Physics.acc = new ex.vec(0, 800)
       this.start(ResourceLoader).then(() => this.startGame());
       this.DataClass = new Data()
