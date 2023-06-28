@@ -5,22 +5,22 @@ import { Resources, ResourceLoader } from './resources.js'
 
 import { Data } from './Data'
 import { Mainmenu } from './Mainmenu'
-// import { Level1 } from './Level1'
-// import { Settings } from './Settings'
-// import { PauseScreen } from "./Pause.js"
+import { Level1 } from './Level1'
+import { Settings } from './Settings'
+import { PauseScreen } from "./Pause.js"
 
 export class Game extends ex.Engine {
 
   DataClass
   mainmenu
-  // settings
-  // level1
-  // pausescreen
+  level1
+  settings
+  pausescreen
 
     constructor() {
       super({
-        width: 854,
-        height: 480,
+        width: 800,
+        height: 600,
         displayMode: ex.DisplayMode.FitScreenAndFill,
         maxFps: 60,
       });
@@ -33,15 +33,18 @@ export class Game extends ex.Engine {
     startGame() {
 
       this.mainmenu = new Mainmenu(this.DataClass)
-      // this.settings = new Settings(this.DataClass)
-      // this.level1 = new Level1(this.DataClass)
-      // this.pausescreen = new PauseScreen(this.DataClass)
+      this.level1 = new Level1(this.DataClass)
+      this.settings = new Settings(this.DataClass)
+      this.pausescreen = new PauseScreen(this.DataClass)
 
       this.add('mainmenu', this.mainmenu)
-      // this.add('level1', this.level1)
-      // this.add('settings', this.settings)
-      // this.add('pausescreen', this.pausescreen)
+      this.add('level1', this.level1)
+      this.add('settings', this.settings)
+      this.add('pausescreen', this.pausescreen)
       this.goToScene('mainmenu')
+    }
+    onPreUpdate() {
+      this.settings.getSettings()
     }
   }
   
