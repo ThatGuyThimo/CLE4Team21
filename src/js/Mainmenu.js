@@ -49,6 +49,11 @@ export class Mainmenu extends ex.Scene {
     }
 
     onPreUpdate(Engine) {
+        Engine.input.keyboard.on("press", (KeyEvent) => {
+            if(KeyEvent.key == "Enter") {
+                Engine.goToScene("level1")
+            }
+        });
         if(this.startButton.isClicked()) {
             this.startButton.setClicked()
             Engine.goToScene('level1')
