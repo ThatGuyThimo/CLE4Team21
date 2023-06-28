@@ -37,6 +37,7 @@ export class levelChunks {
     createChunk(Engine) {
         if(this.DataClass.getPlayerPosition() > this.currentPos - 1000 ) {
             let Chunk = this.readChunk(this.getRandomChunk())
+            console.log(this.offset)
             this.currentPos = this.currentPos + this.posOffset
             Chunk.forEach(item => {
                 Engine.add(item)

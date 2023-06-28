@@ -37,7 +37,7 @@ export class Level1 extends ex.Scene {
     this.endgame = new Endgame(250, 200, 3)
     this.endgame.scale = ex.vec(3,3)
 
-    this.levelchunks = new levelChunks(this.DataClass, 500)
+    this.levelchunks = new levelChunks(this.DataClass, ex.randomIntInRange(200, 500))
 
     this.muisicVolume = this.DataClass.getMuisicvolume()
     this.trackplaying = Resources.level1track

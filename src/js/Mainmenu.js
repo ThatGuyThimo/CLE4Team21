@@ -1,6 +1,7 @@
 import * as ex from "excalibur"
 import { Resources, ResourceLoader } from './resources.js'
 import { Button } from './Button.js'
+import { Image } from "./Image.js"
 
 export class Mainmenu extends ex.Scene {
     startButton
@@ -32,6 +33,8 @@ export class Mainmenu extends ex.Scene {
             }
         });
 
+        const image = new Image( 0, 0, -1, Resources.mainmenuImage, ex.vec(1.6, 1.5), ex.vec(0, 0))
+
         this.startButton = new Button(16, 16, 50, 50, this.DataClass)
         this.startButton.setText('Start', 12)
         this.startButton.setImages(uiButtonsSpriteSheet.sprites[115], uiButtonsSpriteSheet.sprites[1])
@@ -42,6 +45,7 @@ export class Mainmenu extends ex.Scene {
         
         this.add(this.startButton)
         this.add(this.settingsButton)
+        this.add(image)
     }
 
     onPreUpdate(Engine) {

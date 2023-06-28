@@ -55,7 +55,7 @@ export class PauseScreen extends ex.Scene {
         
         this.add(this.settingsButton);
         this.add(this.backButton);
-        this.add(this.restartButton)
+        // this.add(this.restartButton)
         this.add(this.menuButton)
         
     }

@@ -12,6 +12,7 @@ import fallImageSrc from '../images/120x80_PNGSheets/_Fall.png'
 import jumptofallImageSrc from '../images/120x80_PNGSheets/_JumpFallInbetween.png'
 import shieldbubbleImageSrc from '../images/ShieldBubbleEffect.png'
 import shieldbubbleSheetImageSrc from '../images/ShieldBubble.png'
+import mainmenuImageImageSrc from '../images/Startscherm.png'
 import slowdownSheetImageSrc from '../images/SlowDown.png'
 import deathImageSrc from '../images/120x80_PNGSheets/_Death.png'
 import healthImageSrc from '../images/Heart&ManaUi.png'
@@ -51,6 +52,7 @@ const Resources = {
     
     plantenbak: new ImageSource(PlantenbakImage),
     trash: new ImageSource(trashImage),
+    mainmenuImage: new ImageSource(mainmenuImageImageSrc),
     box: new ImageSource(boxImage),
     spike: new ImageSource(spikeImage),
     playeridle: new ImageSource(idleImageSrc),
@@ -86,6 +88,7 @@ const Resources = {
 
 const ResourceLoader = new Loader([
     Resources.spike,
+    Resources.mainmenuImage,
     Resources.changesound,
     Resources.speedpowerupsound,
     Resources.shieldpowerupsound,
